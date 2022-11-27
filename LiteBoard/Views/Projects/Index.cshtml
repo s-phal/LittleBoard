@@ -1,0 +1,45 @@
+﻿@using LiteBoard.Data;
+@using Microsoft.AspNetCore.Identity;
+
+@model IEnumerable<LiteBoard.Models.Project>
+@inject UserManager<Member> userManager
+@inject ApplicationDbContext _context
+
+
+@{
+    ViewData["Title"] = "Index";
+}
+<div class="d-flex">
+    <div class="me-auto fs-6 text-grey">My Projects</div>
+    <a class="btn btn-info text-white shadow-sm" href="#" role="button">Add Project</a>
+
+</div>
+
+
+
+<div class="row">
+
+@{
+    if(!Model.Any())
+    {
+        <span class="text-danger">You have no projects</span>
+    }
+    else
+    {
+        foreach (var project in Model)
+        {
+            <!-- Card Start -->         
+            <div class="card bg-white border-0 shadow-sm rounded-5 w-25 mx-3 my-3" style="height: 200px">
+                <div class="card-body text-dark ">
+                <h5 class="card-title mb-4 py-3 px-1 pb-1 ps-4 margin-left nunito border-start border-4 border-info"><a href="#" class="text-decoration-none text-black">@project.Title</a></h5>
+                 <p class="card-text px-1 text-grey nunito">@project.Description.Substring(0,100) ...</p>
+                </div>
+            </div>
+            <!-- Card End -->
+        }
+    }
+}
+</div>
+
+
+    
