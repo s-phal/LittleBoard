@@ -6,41 +6,81 @@
     ViewData["Title"] = "Details";
 }
 
-@{
-        
+<div class="row mt-5">
+
+	<div class="MAIN col-lg-9">
+		<div class="row">
+			<div class="d-md-flex align-items-end mb-2">
+				<h2 class="me-auto text-grey fs-6 small"><a href="/projects" class="text-decoration-none text-grey">My Projects</a> / @Model.Title</h2>
+				<a class="btn btn-info text-white me-2" href="/projects/create">Add Project</a>
+			</div>
+			<div class="TASKS-LIST col-65 mt-3">
+				<div class="TASK-LABEL mb-4">
+					<h2 class="me-auto text-black opacity-50 text-uppercase fw-bold fs-6">
+						Tasks
+					</h2>
+				</div>
+				<!-- Task Item START-->
+				<div class="TASK-ITEM p-2 mb-4 bg-white shadow-sm nunito rounded-3">
+					<h5 class="text-dark border-start border-3 border-info fs-5 ps-4 details-margin-left">
+						Finish Project
+					</h5>
+				</div>
+				<!-- Task Item END -->
+				<div class="NOTES-LABEL mb-4">
+					<h2 class="me-auto text-black opacity-50 text-uppercase fw-bold fs-6">
+						General Notes
+					</h2>
+				</div>
+				<!-- General Notes START-->
+				<div class="NOTES-CARD card bg-white border-0 shadow-sm rounded-5 my-3">					
+					<div class="card-body text-dark">
+				<div class="mb-3">
+				  <textarea class="form-control border-0" id="exampleFormControlTextarea1" rows="3"></textarea>
+				</div>
+					</div>
+				</div>
+				<!-- General Notes END-->
+
+							
+				
+			</div>
+			<div class="PROJ-DETAILS col-lg-4 ms-2">
+			<div class="card bg-white border-0 shadow-sm rounded-5 my-3">					
+				<div class="card-body text-dark">
+					<h5 class="card-title mb-4 py-3 pb-1 ps-3 margin-left nunito border-start border-4 border-info">
+						<a asp-asp-controller="Project" class="text-decoration-none text-black" href="/Projects/Details/9">
+							Flip was here
+						</a>
+					</h5>
+					<p class="card-text px-1 text-grey nunito">In publishing and graphic design, Lorem ipsum is a placeholder text.In publishing and graphic designIn publishing and graphic design, Lorem ipsum is a placeholder text.In publishing and graphic design ...
+					</p>
+				</div>
+			</div>
+		</div>
+		</div>
+	</div>
+	<div class="SIDEBAR col-lg-3">
+		<!-- Latest Updates start -->
+		<div class="p-xl-0">
+			<div class="rounded-3 ">
+				<!-- Dashboard menu -->
+				<div class="list-group list-group-dark list-group-borderless">
+					<a class="list-group-item active">Dashboard</a>
+					<a class="list-group-item" href="#">One Two</a>
+					<a class="list-group-item" href="#">One Two</a>
+					<a class="list-group-item" href="#">One Two</a>
+					<a class="list-group-item" href="#">One Two</a>
+					<a class="list-group-item" href="#">One Two</a>
+					<a class="list-group-item" href="#">One Two</a>
+					<a class="list-group-item" href="#">One Two</a>
+
+				</div>
+			</div>
+		</div>
+		<!-- Latest Updates End -->
+	</div>
 
 
-<h1>Details</h1>
 
-
-
-<div>
-    <h4>Project</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Member)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Member.Id)
-        </dd>
-    </dl>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
-    }
-}

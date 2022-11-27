@@ -6,40 +6,70 @@
 @inject ApplicationDbContext _context
 
 
-@{
-    ViewData["Title"] = "Index";
-}
-<div class="d-flex">
-    <div class="me-auto fs-6 text-grey">My Projects</div>
-    <a class="btn btn-info text-white shadow-sm" href="#" role="button">Add Project</a>
+<div class="row mt-5">
+
+	<div class="col-lg-9">
+        <div class="row">
+			<div class="d-flex align-items-end mb-2">
+				<h2 class="me-auto text-black opacity-50 text-uppercase fw-bold fs-6">My Projects</h2>
+				<a class="btn btn-info text-white" asp-controller="projects" asp-action="create">Add Project</a>
+			</div>			
+		
+			@{
+				foreach (var project in Model)
+				{
+				<!-- Card Start -->
+					<div class="col-sm-6 col-xl-4">
+						<div class="card bg-white border-0 shadow-sm rounded-5 my-3">					
+							<div class="card-body text-dark">
+								<h5 class="card-title mb-4 py-3 pb-1 ps-3 margin-left nunito border-start border-4 border-info"><a asp-asp-controller="Project" asp-action="Details" asp-route-id="@project.Id" class="text-decoration-none text-black">
+										@if (project.Title.Count() > 28)
+										{
+											@project.Title.Substring(0,25) <span>...</span>
+										} else {											
+										@project.Title
+										}
+
+									</a></h5>
+								<p class="card-text px-1 text-grey nunito">@project.Description.Substring(0,100) ...</p>
+							</div>
+						</div>
+					</div>
+				<!-- Card End -->
+					}
+				}
+		</div>
+
+	</div>
+
+
+
+
+
+		<div class="col-lg-3">
+			<!-- Latest Updates start -->
+		<div class="p-xl-0">
+			<div class="rounded-3 ">
+				<!-- Dashboard menu -->
+				<div class="list-group list-group-dark list-group-borderless">
+					<a class="list-group-item active">Dashboard</a>
+					<a class="list-group-item" href="#">One Two</a>
+					<a class="list-group-item" href="#">One Two</a>
+					<a class="list-group-item" href="#">One Two</a>
+					<a class="list-group-item" href="#">One Two</a>
+					<a class="list-group-item" href="#">One Two</a>
+					<a class="list-group-item" href="#">One Two</a>
+					<a class="list-group-item" href="#">One Two</a>
+
+				</div>
+			</div>
+		</div>
+			<!-- Latest Updates End -->
+		</div>
+	
+
 
 </div>
 
 
 
-<div class="row">
-
-@{
-    if(!Model.Any())
-    {
-        <span class="text-danger">You have no projects</span>
-    }
-    else
-    {
-        foreach (var project in Model)
-        {
-            <!-- Card Start -->         
-            <div class="card bg-white border-0 shadow-sm rounded-5 w-25 mx-3 my-3" style="height: 200px">
-                <div class="card-body text-dark ">
-                <h5 class="card-title mb-4 py-3 px-1 pb-1 ps-4 margin-left nunito border-start border-4 border-info"><a href="#" class="text-decoration-none text-black">@project.Title</a></h5>
-                 <p class="card-text px-1 text-grey nunito">@project.Description.Substring(0,100) ...</p>
-                </div>
-            </div>
-            <!-- Card End -->
-        }
-    }
-}
-</div>
-
-
-    
