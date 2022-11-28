@@ -11,5 +11,6 @@ namespace LiteBoard.Data
         {
         }
         public DbSet<LiteBoard.Models.Project> Project { get; set; } = default!;
+        public DbSet<LiteBoard.Models.Chore> Chores { get; set; } = default!;
     }
 }

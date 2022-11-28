@@ -17,5 +17,6 @@ namespace LiteBoard.Models
         public string MemberId { get; set; } 
         public virtual Member? Member { get; set; }
 
+        public virtual ICollection<Chore> Chores { get; set; } = new HashSet<Chore>();
     }
 }

@@ -38,6 +38,7 @@ namespace LiteBoard.Controllers
         }
 
         // GET: Projects/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {       
 
@@ -49,6 +50,7 @@ namespace LiteBoard.Controllers
 
             var project = await _context.Project
                 .Include(p => p.Member)
+                .Include(p => p.Chores)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (project.MemberId != _userManager.GetUserId(User))
@@ -81,10 +83,6 @@ namespace LiteBoard.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,Description, MemberId")] Project project)
         {
-
-
-
-
             if (ModelState.IsValid)
             {                
                 _context.Add(project);
@@ -95,8 +93,9 @@ namespace LiteBoard.Controllers
             return View(project);
         }
 
-        // GET: Projects/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+		// GET: Projects/Edit/5
+		[Authorize]
+		public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Project == null)
             {
@@ -117,10 +116,11 @@ namespace LiteBoard.Controllers
             return View(project);
         }
 
-        // POST: Projects/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+		// POST: Projects/Edit/5
+		// To protect from overposting attacks, enable the specific properties you want to bind to.
+		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+		[Authorize]
+		[HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,MemberId")] Project project)
         {
@@ -157,8 +157,9 @@ namespace LiteBoard.Controllers
             return View(project);
         }
 
-        // GET: Projects/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+		// GET: Projects/Delete/5
+		[Authorize]
+		public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Project == null)
             {
@@ -181,8 +182,9 @@ namespace LiteBoard.Controllers
             return View(project);
         }
 
-        // POST: Projects/Delete/5
-        [HttpPost, ActionName("Delete")]
+		// POST: Projects/Delete/5
+		[Authorize]
+		[HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

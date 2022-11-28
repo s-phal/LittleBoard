@@ -10,7 +10,7 @@
 
 	<div class="MAIN col-lg-9">
 		<div class="row">
-			<div class="d-md-flex align-items-end mb-2">
+			<div class="BREADCRUMBS d-md-flex align-items-end mb-2">
 				<h2 class="me-auto text-grey fs-6 small"><a href="/projects" class="text-decoration-none text-grey">My Projects</a> / @Model.Title</h2>
 				<a class="btn btn-info text-white me-2" href="/projects/create">Add Project</a>
 			</div>
@@ -23,7 +23,11 @@
 				<!-- Task Item START-->
 				<div class="TASK-ITEM p-2 mb-4 bg-white shadow-sm nunito rounded-3">
 					<h5 class="text-dark border-start border-3 border-info fs-5 ps-4 details-margin-left">
-						Finish Project
+						@if (!Model.Chores.Any()) { <span>You have no Task</span>}
+						@foreach (var chore in Model.Chores)
+						{
+							<span>@chore.Body</span>
+						}
 					</h5>
 				</div>
 				<!-- Task Item END -->
