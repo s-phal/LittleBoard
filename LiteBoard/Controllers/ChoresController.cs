@@ -10,6 +10,8 @@ using LiteBoard.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
+// TODO Change action routes
+
 namespace LiteBoard.Controllers
 {
     public class ChoresController : Controller
@@ -46,15 +48,13 @@ namespace LiteBoard.Controllers
             var chore = await _context.Chores
                 .Include(c => c.Project)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (chore == null)
             {
                 return NotFound();
             }
 
-            if (chore.Project.MemberId != _userManager.GetUserId(User))
-            {
-                RedirectToAction("unauthorize", "project");
-            }
+
 
             return View(chore);
         }
@@ -81,7 +81,7 @@ namespace LiteBoard.Controllers
             {
                 _context.Add(chore);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("details", "projects", new { id = chore.ProjectId});
             }
             ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Id", chore.ProjectId);
             return View(chore);
@@ -91,15 +91,16 @@ namespace LiteBoard.Controllers
 		[Authorize]
 		public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Chores == null)
+
+
+
+			if (id == null || _context.Chores == null)
             {
                 return NotFound();
             }
+
 			var chore = await _context.Chores.FindAsync(id);
-			if (chore.Project.MemberId != _userManager.GetUserId(User))
-			{
-				RedirectToAction("unauthorize", "project");
-			}
+
             if (chore == null)
             {
                 return NotFound();
@@ -114,16 +115,12 @@ namespace LiteBoard.Controllers
 		[Authorize]
 		[HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Body,ProjectId")] Chore chore)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Body,ProjectId, Completed")] Chore chore)
         {
             if (id != chore.Id)
             {
                 return NotFound();
             }
-			if (chore.Project.MemberId != _userManager.GetUserId(User))
-			{
-				RedirectToAction("unauthorize", "project");
-			}
 
 			if (ModelState.IsValid)
             {
@@ -143,7 +140,7 @@ namespace LiteBoard.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("details","projects", new { Id = chore.ProjectId });
             }
             ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Id", chore.ProjectId);
             return View(chore);

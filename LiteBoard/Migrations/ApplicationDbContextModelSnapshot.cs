@@ -34,6 +34,12 @@ namespace LiteBoard.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("Completed")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("ProjectId")
                         .HasColumnType("integer");
 

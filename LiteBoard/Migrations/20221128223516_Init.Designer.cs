@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LiteBoard.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221127233418_AddChores")]
-    partial class AddChores
+    [Migration("20221128223516_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,6 +36,12 @@ namespace LiteBoard.Migrations
                     b.Property<string>("Body")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool>("Completed")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("ProjectId")
                         .HasColumnType("integer");

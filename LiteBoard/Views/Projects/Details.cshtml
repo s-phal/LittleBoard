@@ -3,7 +3,8 @@
 @inject UserManager<Member> userManager;
 
 @{
-    ViewData["Title"] = "Details";
+	ViewData["Title"] = "Details";
+	string completed = "checked";
 }
 
 <div class="row mt-5">
@@ -20,17 +21,56 @@
 						Tasks
 					</h2>
 				</div>
-				<!-- Task Item START-->
-				<div class="TASK-ITEM p-2 mb-4 bg-white shadow-sm nunito rounded-3">
-					<h5 class="text-dark border-start border-3 border-info fs-5 ps-4 details-margin-left">
-						@if (!Model.Chores.Any()) { <span>You have no Task</span>}
-						@foreach (var chore in Model.Chores)
-						{
-							<span>@chore.Body</span>
-						}
-					</h5>
-				</div>
-				<!-- Task Item END -->
+
+			<!--Create Task Start-->
+			<div class="CREATE-TASK p-2 mb-4 bg-white shadow-sm nunito rounded-3">
+				<h5 class="text-dark border-start border-3 border-info fs-5 ps-4 details-margin-left">
+					<form asp-controller="chores" asp-action="create">
+						<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+						<input type="hidden" name="ProjectId" asp-for="@Model.Id" />
+						<input class="form-control w-100 border-0" name="Body" placeholder="Add a new task" />
+					</form>
+				</h5>
+			</div>
+			<!--Create Task END -->
+				@if (!Model.Chores.Any())
+				{
+					<div class="mb-4">
+						<span class="text-warning text-danger">There are currently no tasks.</span>
+					</div>
+				}
+<!-- Task Item START-->
+@foreach (var chore in Model.Chores)
+{			
+	<div class="TASK-ITEM p-2 mb-4 bg-white shadow-sm nunito rounded-3 d-flex align-items-center">
+		<div class="TASK-BODY w-100 me-auto">
+			<h5 class="text-dark border-start border-3 border-info fs-5 ps-4 details-margin-left">
+				<!-- Task Body START-->
+				<form asp-controller="chores" asp-action="edit">
+					<input type="hidden" name="ProjectId" asp-for="@Model.Id" />
+					<input type="hidden" name="Id" asp-for="@chore.Id" />							
+					<input name="Body" class="form-control w-100 border-0" value="@chore.Body"/>
+				</form>
+				<!-- Task Body END -->
+			</h5>
+		</div>
+		<div class="CHECKBOX me-2">		
+		<!-- Check Box START -->
+			<form asp-controller="Chores" asp-action="Edit">
+				<input type="hidden" name="Id" value="@chore.Id" />
+				<input type="hidden" name="Body" value="@chore.Body" />
+				<input type="hidden" name="ProjectId" value="@chore.ProjectId" />
+				<input name="Completed" type="checkbox" value="true" onChange="this.form.submit()" @if(chore.Completed) { @completed }/>
+			</form>			
+			<!-- Check Box END-->
+		</div>
+	</div>
+}
+
+
+	<!-- Task Item END -->
+
+
 				<div class="NOTES-LABEL mb-4">
 					<h2 class="me-auto text-black opacity-50 text-uppercase fw-bold fs-6">
 						General Notes

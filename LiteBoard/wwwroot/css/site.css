@@ -51,3 +51,7 @@ body {
     flex: 0 0 auto;
     width: 65%;
 }
+
+.no-resize {
+    resize: none;
+}

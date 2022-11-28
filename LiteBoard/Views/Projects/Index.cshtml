@@ -20,7 +20,7 @@
 				{
 				<!-- Card Start -->
 					<div class="col-sm-6 col-xl-4">
-						<div class="card bg-white border-0 shadow-sm rounded-5 my-3">					
+						<div class="card bg-white border-0 shadow-sm rounded-5 mt-3 mb-1" style="height:190px">					
 							<div class="card-body text-dark">
 								<h5 class="card-title mb-4 py-3 pb-1 ps-3 margin-left nunito border-start border-4 border-info"><a asp-asp-controller="Project" asp-action="Details" asp-route-id="@project.Id" class="text-decoration-none text-black">
 										@if (project.Title.Count() > 28)
@@ -31,7 +31,18 @@
 										}
 
 									</a></h5>
-								<p class="card-text px-1 text-grey nunito">@project.Description.Substring(0,100) ...</p>
+								<p class="card-text px-1 text-grey nunito">
+									@{
+										if(project.Description.Count() > 80)
+										{
+											@project.Description.Substring(0,80) <span>...</span>
+										} 
+										else 
+										{											
+											@project.Description
+										}
+									}
+								</p>
 							</div>
 						</div>
 					</div>

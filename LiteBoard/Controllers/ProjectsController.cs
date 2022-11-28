@@ -9,6 +9,7 @@ using LiteBoard.Data;
 using LiteBoard.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using System.Collections.Immutable;
 
 namespace LiteBoard.Controllers
 {
@@ -30,9 +31,10 @@ namespace LiteBoard.Controllers
 
             var applicationDbContext = _context.Project
                 .Include(p => p.Member)
-                .Where(p=>p.MemberId == _userManager.GetUserId(User));
+                .Where(p => p.MemberId == _userManager.GetUserId(User))
+                .OrderByDescending(Project => Project.CreatedDate);
 
-              
+
             return View(await applicationDbContext.ToListAsync());
 
         }
@@ -42,7 +44,6 @@ namespace LiteBoard.Controllers
         public async Task<IActionResult> Details(int? id)
         {       
 
-
             if (id == null || _context.Project == null)
             {
                 return NotFound();
@@ -50,10 +51,10 @@ namespace LiteBoard.Controllers
 
             var project = await _context.Project
                 .Include(p => p.Member)
-                .Include(p => p.Chores)
+                .Include(p => p.Chores)                
                 .FirstOrDefaultAsync(m => m.Id == id);
 
-            if (project.MemberId != _userManager.GetUserId(User))
+			if (project.MemberId != _userManager.GetUserId(User))
             {
                 return RedirectToAction("unauthorize","project");
             }
