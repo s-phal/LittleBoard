@@ -31,7 +31,7 @@ namespace LiteBoard.Controllers
 
             var applicationDbContext = _context.Project
                 .Include(p => p.Member)
-                .Where(p => p.MemberId == _userManager.GetUserId(User))
+                .Where(p => p.MemberId == _userManager.GetUserId(User)) // show only projects that belongs to projects owner
                 .OrderByDescending(Project => Project.CreatedDate);
 
 

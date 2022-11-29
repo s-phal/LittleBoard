@@ -10,7 +10,8 @@ using LiteBoard.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
-// TODO Change action routes
+// TODO rename routes from CHORES to TASKS
+
 
 namespace LiteBoard.Controllers
 {
@@ -31,7 +32,7 @@ namespace LiteBoard.Controllers
         {
             var applicationDbContext = _context.Chores
                 .Include(c => c.Project)
-                .Where(c => c.Project.MemberId == _userManager.GetUserId(User));
+                .Where(c => c.Project.MemberId == _userManager.GetUserId(User)); // Show only Tasks that belongs to the Project Owner
                 
             return View(await applicationDbContext.ToListAsync());
         }
@@ -40,7 +41,14 @@ namespace LiteBoard.Controllers
 		[Authorize]
 		public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Chores == null)
+			var choreContext = await _context.Chores.FindAsync(id);
+            var project = await _context.Project.FindAsync(choreContext.ProjectId);
+			if (project.MemberId != _userManager.GetUserId(User))
+			{
+				return RedirectToAction("unauthorize", "project");
+
+			}
+			if (id == null || _context.Chores == null)
             {
                 return NotFound();
             }
@@ -77,7 +85,14 @@ namespace LiteBoard.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Body,ProjectId")] Chore chore)
         {
-            if (ModelState.IsValid)
+			var project = await _context.Project.FindAsync(chore.ProjectId);
+			if (project.MemberId != _userManager.GetUserId(User))
+			{
+				return RedirectToAction("unauthorize", "project");
+
+			}
+
+			if (ModelState.IsValid)
             {
                 _context.Add(chore);
                 await _context.SaveChangesAsync();
@@ -91,8 +106,13 @@ namespace LiteBoard.Controllers
 		[Authorize]
 		public async Task<IActionResult> Edit(int? id)
         {
+			var choreContext = await _context.Chores.FindAsync(id);
+			var project = await _context.Project.FindAsync(choreContext.ProjectId);
+			if (project.MemberId != _userManager.GetUserId(User))
+			{
+				return RedirectToAction("unauthorize", "project");
 
-
+			}
 
 			if (id == null || _context.Chores == null)
             {
@@ -100,8 +120,7 @@ namespace LiteBoard.Controllers
             }
 
 			var chore = await _context.Chores.FindAsync(id);
-
-            if (chore == null)
+			if (chore == null)
             {
                 return NotFound();
             }
@@ -117,7 +136,14 @@ namespace LiteBoard.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Body,ProjectId, Completed")] Chore chore)
         {
-            if (id != chore.Id)
+			var project = await _context.Project.FindAsync(chore.ProjectId);
+			if (project.MemberId != _userManager.GetUserId(User))
+			{
+				return RedirectToAction("unauthorize", "project");
+
+			}
+
+			if (id != chore.Id)
             {
                 return NotFound();
             }
@@ -150,7 +176,14 @@ namespace LiteBoard.Controllers
 		[Authorize]
 		public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Chores == null)
+			var choreContext = await _context.Chores.FindAsync(id);
+			var project = await _context.Project.FindAsync(choreContext.ProjectId);
+			if (project.MemberId != _userManager.GetUserId(User))
+			{
+				return RedirectToAction("unauthorize", "project");
+
+			}
+			if (id == null || _context.Chores == null)
             {
                 return NotFound();
             }
@@ -162,10 +195,7 @@ namespace LiteBoard.Controllers
             {
                 return NotFound();
             }
-			if (chore.Project.MemberId != _userManager.GetUserId(User))
-			{
-				RedirectToAction("unauthorize", "project");
-			}
+
 
 			return View(chore);
         }
@@ -176,7 +206,14 @@ namespace LiteBoard.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Chores == null)
+			var choreContext = await _context.Chores.FindAsync(id);
+			var project = await _context.Project.FindAsync(choreContext.ProjectId);
+			if (project.MemberId != _userManager.GetUserId(User))
+			{
+				return RedirectToAction("unauthorize", "project");
+
+			}
+			if (_context.Chores == null)
             {
                 return Problem("Entity set 'ApplicationDbContext.Chores'  is null.");
             }
@@ -185,10 +222,7 @@ namespace LiteBoard.Controllers
             {
                 _context.Chores.Remove(chore);
             }
-			if (chore.Project.MemberId != _userManager.GetUserId(User))
-			{
-				RedirectToAction("unauthorize", "project");
-			}
+
 
 			await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

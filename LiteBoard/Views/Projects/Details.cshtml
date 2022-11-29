@@ -54,13 +54,13 @@
 				<!-- Task Body END -->
 			</h5>
 		</div>
-		<div class="CHECKBOX me-2">		
+		<div class="CHECKBOX me-2 form-check">		
 		<!-- Check Box START -->
 			<form asp-controller="Chores" asp-action="Edit">
 				<input type="hidden" name="Id" value="@chore.Id" />
 				<input type="hidden" name="Body" value="@chore.Body" />
 				<input type="hidden" name="ProjectId" value="@chore.ProjectId" />
-				<input name="Completed" type="checkbox" value="true" onChange="this.form.submit()" @if(chore.Completed) { @completed }/>
+				<input name="Completed" class="form-check-input" type="checkbox" value="true" onChange="this.form.submit()" @if(chore.Completed) { @completed }/>
 			</form>			
 			<!-- Check Box END-->
 		</div>
