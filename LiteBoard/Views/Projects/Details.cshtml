@@ -3,8 +3,13 @@
 @inject UserManager<Member> userManager;
 
 @{
+	// TODO Fix tasks checked bug
+
 	ViewData["Title"] = "Details";
 	string completed = "checked";
+	string textGrey = "text-grey";
+	
+
 }
 
 <div class="row mt-5">
@@ -48,8 +53,8 @@
 				<!-- Task Body START-->
 				<form asp-controller="chores" asp-action="edit">
 					<input type="hidden" name="ProjectId" asp-for="@Model.Id" />
-					<input type="hidden" name="Id" asp-for="@chore.Id" />							
-					<input name="Body" class="form-control w-100 border-0" value="@chore.Body"/>
+					<input type="hidden" name="Id" asp-for="@chore.Id" />
+					<input name="Body" class="form-control w-100 border-0 @if(chore.Completed){ @textGrey }" value="@chore.Body"/>
 				</form>
 				<!-- Task Body END -->
 			</h5>

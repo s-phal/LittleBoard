@@ -14,7 +14,10 @@ namespace LiteBoard.Models
         [DataType(DataType.Date)]
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 
-        public string MemberId { get; set; } 
+		[DataType(DataType.DateTime)]
+		public DateTime UpdatedDate { get; set; } = DateTime.UtcNow;
+
+		public string MemberId { get; set; } 
         public virtual Member? Member { get; set; }
 
         public virtual ICollection<Chore> Chores { get; set; } = new HashSet<Chore>();

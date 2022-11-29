@@ -94,6 +94,7 @@ namespace LiteBoard.Controllers
 
 			if (ModelState.IsValid)
             {
+
                 _context.Add(chore);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("details", "projects", new { id = chore.ProjectId});
@@ -149,9 +150,16 @@ namespace LiteBoard.Controllers
             }
 
 			if (ModelState.IsValid)
-            {
+            {           
+
                 try
                 {
+					var getCreatedDateValuesFromDB = await _context.Chores // Keeps the same CreatedDate value when updating
+	                    .AsNoTracking()
+	                    .FirstOrDefaultAsync(chores => chores.Id == id);
+
+					chore.CreatedDate = getCreatedDateValuesFromDB.CreatedDate;
+                    
                     _context.Update(chore);
                     await _context.SaveChangesAsync();
                 }

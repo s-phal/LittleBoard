@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using System.Collections.Immutable;
 
+// TODO implement slugs
+
 namespace LiteBoard.Controllers
 {
     public class ProjectsController : Controller
@@ -138,7 +140,13 @@ namespace LiteBoard.Controllers
             {
                 try
                 {
-                    _context.Update(project);
+					var getCreatedDateValuesFromDB = await _context.Project // Keeps the same CreatedDate value when updating
+	                .AsNoTracking()
+	                .FirstOrDefaultAsync(p => p.Id == id);
+
+					project.CreatedDate = getCreatedDateValuesFromDB.CreatedDate;
+
+					_context.Update(project);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
