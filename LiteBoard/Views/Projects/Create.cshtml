@@ -23,6 +23,7 @@
             <span asp-validation-for="Description" class="text-danger"></span>
         </div>
         <input hidden type="text" id="MemberId" name="MemberId" value="@userManager.GetUserId(User)" />
+        <input hidden type="text" id="MemberId" name="MemberId" />
         <div class="mt-4">
             <Button type="submit" class="btn btn-info text-white me-2">Create Project</Button>
             <a asp-action="Index">Cancel</a>

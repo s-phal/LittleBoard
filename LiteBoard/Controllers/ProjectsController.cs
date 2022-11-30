@@ -88,10 +88,12 @@ namespace LiteBoard.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Description, MemberId")] Project project)
+        public async Task<IActionResult> Create([Bind("Id,Title,Description, MemberId, ProjectId")] Project project)
         {
             if (ModelState.IsValid)
-            {                
+            {
+                project.Activities.Add(new ActivityModel() { Description = "created_project" }); // Insert new row of Activity
+
                 _context.Add(project);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -147,10 +149,11 @@ namespace LiteBoard.Controllers
 					var getCreatedDateValuesFromDB = await _context.Project // Keeps the same CreatedDate value when updating
 	                .AsNoTracking()
 	                .FirstOrDefaultAsync(p => p.Id == id);
-
 					project.CreatedDate = getCreatedDateValuesFromDB.CreatedDate;
 
-					_context.Update(project);
+                    project.Activities.Add(new ActivityModel() { Description = "updated", CreatedDate = getCreatedDateValuesFromDB.CreatedDate } ); // Create new row of Activity titled Updated
+
+                    _context.Update(project);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)

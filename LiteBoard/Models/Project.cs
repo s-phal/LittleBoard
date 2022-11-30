@@ -23,6 +23,6 @@ namespace LiteBoard.Models
         public virtual Member? Member { get; set; }
 
         public virtual ICollection<Chore> Chores { get; set; } = new HashSet<Chore>();
-        public virtual ICollection<Activity> Activities { get; set; } = new HashSet<Activity>();
+        public virtual ICollection<ActivityModel> Activities { get; set; } = new HashSet<ActivityModel>();
     }
 }

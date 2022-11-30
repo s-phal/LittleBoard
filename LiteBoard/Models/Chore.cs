@@ -17,5 +17,10 @@ namespace LiteBoard.Models
 
 		public int ProjectId { get; set; }
 		public virtual Project? Project { get; set; }
-	}
+
+
+
+		public virtual ICollection<ActivityModel> Activities { get; set; } = new HashSet<ActivityModel>();
+
+    }
 }

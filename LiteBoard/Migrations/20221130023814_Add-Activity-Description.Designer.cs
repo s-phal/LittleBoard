@@ -3,6 +3,7 @@ using System;
 using LiteBoard.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LiteBoard.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221130023814_Add-Activity-Description")]
+    partial class AddActivityDescription
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,9 +33,6 @@ namespace LiteBoard.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("ChoreId")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -47,8 +47,6 @@ namespace LiteBoard.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ChoreId");
 
                     b.HasIndex("ProjectId");
 
@@ -329,17 +327,11 @@ namespace LiteBoard.Migrations
 
             modelBuilder.Entity("LiteBoard.Models.ActivityModel", b =>
                 {
-                    b.HasOne("LiteBoard.Models.Chore", "Chore")
-                        .WithMany("Activities")
-                        .HasForeignKey("ChoreId");
-
                     b.HasOne("LiteBoard.Models.Project", "Project")
                         .WithMany("Activities")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Chore");
 
                     b.Navigation("Project");
                 });
@@ -415,11 +407,6 @@ namespace LiteBoard.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("LiteBoard.Models.Chore", b =>
-                {
-                    b.Navigation("Activities");
                 });
 
             modelBuilder.Entity("LiteBoard.Models.Member", b =>

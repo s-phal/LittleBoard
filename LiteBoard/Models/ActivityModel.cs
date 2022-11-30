@@ -5,6 +5,8 @@ namespace LiteBoard.Models
     public class ActivityModel
     {
         public int Id { get; set; }
+        public string Description { get; set; }
+
 
         [DataType(DataType.Date)]
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
@@ -16,5 +18,11 @@ namespace LiteBoard.Models
         public int ProjectId { get; set; }
         public virtual Project? Project { get; set; }
 
+        public int? ChoreId { get; set; }
+        public virtual Chore? Chore { get; set; }
+
     }
 }
+
+
+// TODO new activity for incomplete(ABANDONED) task

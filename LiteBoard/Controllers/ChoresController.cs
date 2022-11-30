@@ -95,6 +95,8 @@ namespace LiteBoard.Controllers
 
 			if (ModelState.IsValid)
             {
+                
+                chore.Activities.Add(new ActivityModel() { ProjectId = project.Id, Description = "created_task" }); // Insert new row of Activity
 
                 _context.Add(chore);
                 await _context.SaveChangesAsync();
@@ -108,6 +110,8 @@ namespace LiteBoard.Controllers
 		[Authorize]
 		public async Task<IActionResult> Edit(int? id)
         {
+
+
 			var choreContext = await _context.Chore.FindAsync(id);
 			var project = await _context.Project.FindAsync(choreContext.ProjectId);
 			if (project.MemberId != _userManager.GetUserId(User))
@@ -160,7 +164,15 @@ namespace LiteBoard.Controllers
 	                    .FirstOrDefaultAsync(chore => chore.Id == id);
 
 					chore.CreatedDate = getCreatedDateValuesFromDB.CreatedDate;
-                    
+
+                    if(chore.Completed == true)
+                    {
+
+                    chore.Activities.Add(new ActivityModel() { ProjectId = project.Id, Description = "completed_task" }); // Insert new row of Activity
+                    }
+
+
+
                     _context.Update(chore);
                     await _context.SaveChangesAsync();
                 }
