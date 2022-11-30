@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Identity;
 using System.Collections.Immutable;
 
 // TODO implement slugs
+// TODO Sort by Chores->UpdatedDate for each project list
+// TODO Hide Edit View
 
 namespace LiteBoard.Controllers
 {
@@ -33,8 +35,10 @@ namespace LiteBoard.Controllers
 
             var applicationDbContext = _context.Project
                 .Include(p => p.Member)
-                .Where(p => p.MemberId == _userManager.GetUserId(User)) // show only projects that belongs to projects owner
-                .OrderByDescending(Project => Project.CreatedDate);
+                .Where(p => p.MemberId == _userManager.GetUserId(User)) // show only projects that belongs to projects owner 
+                .OrderByDescending(p => p.UpdatedDate);
+
+
 
 
             return View(await applicationDbContext.ToListAsync());
@@ -125,7 +129,7 @@ namespace LiteBoard.Controllers
 		[Authorize]
 		[HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,MemberId")] Project project)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,MemberId, Notes")] Project project)
         {
             if (id != project.Id)
             {
@@ -160,7 +164,7 @@ namespace LiteBoard.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("details","projects", new { id = id});
             }
             ViewData["MemberId"] = new SelectList(_context.Users, "Id", "Id", project.MemberId);
             return View(project);

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LiteBoard.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221129165204_Add-UpdatedDate-Projects")]
-    partial class AddUpdatedDateProjects
+    [Migration("20221129233555_Add-Notes-Project")]
+    partial class AddNotesProject
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,7 +53,7 @@ namespace LiteBoard.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("Chores");
+                    b.ToTable("Chore");
                 });
 
             modelBuilder.Entity("LiteBoard.Models.Member", b =>
@@ -146,6 +146,9 @@ namespace LiteBoard.Migrations
 
                     b.Property<string>("MemberId")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Notes")
                         .HasColumnType("text");
 
                     b.Property<string>("Title")

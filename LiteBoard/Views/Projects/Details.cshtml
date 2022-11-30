@@ -3,7 +3,7 @@
 @inject UserManager<Member> userManager;
 
 @{
-	// TODO Fix tasks checked bug
+
 
 	ViewData["Title"] = "Details";
 	string completed = "checked";
@@ -18,7 +18,7 @@
 		<div class="row">
 			<div class="BREADCRUMBS d-md-flex align-items-end mb-2">
 				<h2 class="me-auto text-grey fs-6 small"><a href="/projects" class="text-decoration-none text-grey">My Projects</a> / @Model.Title</h2>
-				<a class="btn btn-info text-white me-2" href="/projects/create">Add Project</a>
+				<a class="btn btn-info text-white me-2" href="/projects/edit/@Model.Id">Edit Project</a>
 			</div>
 			<div class="TASKS-LIST col-65 mt-3">
 				<div class="TASK-LABEL mb-4">
@@ -44,37 +44,34 @@
 						<span class="text-warning text-danger">There are currently no tasks.</span>
 					</div>
 				}
-<!-- Task Item START-->
-@foreach (var chore in Model.Chores)
-{			
-	<div class="TASK-ITEM p-2 mb-4 bg-white shadow-sm nunito rounded-3 d-flex align-items-center">
-		<div class="TASK-BODY w-100 me-auto">
-			<h5 class="text-dark border-start border-3 border-info fs-5 ps-4 details-margin-left">
-				<!-- Task Body START-->
-				<form asp-controller="chores" asp-action="edit">
-					<input type="hidden" name="ProjectId" asp-for="@Model.Id" />
-					<input type="hidden" name="Id" asp-for="@chore.Id" />
-					<input name="Body" class="form-control w-100 border-0 @if(chore.Completed){ @textGrey }" value="@chore.Body"/>
-				</form>
-				<!-- Task Body END -->
-			</h5>
-		</div>
-		<div class="CHECKBOX me-2 form-check">		
-		<!-- Check Box START -->
-			<form asp-controller="Chores" asp-action="Edit">
-				<input type="hidden" name="Id" value="@chore.Id" />
-				<input type="hidden" name="Body" value="@chore.Body" />
-				<input type="hidden" name="ProjectId" value="@chore.ProjectId" />
-				<input name="Completed" class="form-check-input" type="checkbox" value="true" onChange="this.form.submit()" @if(chore.Completed) { @completed }/>
-			</form>			
-			<!-- Check Box END-->
-		</div>
-	</div>
-}
-
-
-	<!-- Task Item END -->
-
+				<!-- Task Item START-->
+				@foreach (var chore in Model.Chores.OrderBy( c => c.CreatedDate).ToList())
+				{			
+					<div class="TASK-ITEM p-2 mb-4 bg-white shadow-sm nunito rounded-3 d-flex align-items-center">
+						<div class="TASK-BODY w-100 me-auto">
+							<h5 class="text-dark border-start border-3 border-info fs-5 ps-4 details-margin-left">
+								<!-- Task Body START-->
+								<form asp-controller="chores" asp-action="edit">
+									<input type="hidden" name="ProjectId" asp-for="@Model.Id" />
+									<input type="hidden" name="Id" asp-for="@chore.Id" />
+									<input name="Body" class="form-control w-100 border-0 @if(chore.Completed){ @textGrey }" value="@chore.Body"/>
+								</form>
+								<!-- Task Body END -->
+							</h5>
+						</div>
+						<div class="CHECKBOX me-2 form-check">		
+						<!-- Check Box START -->
+							<form asp-controller="Chores" asp-action="Edit">
+								<input type="hidden" name="Id" value="@chore.Id" />
+								<input type="hidden" name="Body" value="@chore.Body" />
+								<input type="hidden" name="ProjectId" value="@chore.ProjectId" />
+								<input name="Completed" class="form-check-input" type="checkbox" value="true" onChange="this.form.submit()" @if(chore.Completed) { @completed }/>
+							</form>			
+							<!-- Check Box END-->
+						</div>
+					</div>
+				}
+				<!-- Task Item END -->
 
 				<div class="NOTES-LABEL mb-4">
 					<h2 class="me-auto text-black opacity-50 text-uppercase fw-bold fs-6">
@@ -84,32 +81,36 @@
 				<!-- General Notes START-->
 				<div class="NOTES-CARD card bg-white border-0 shadow-sm rounded-5 my-3">					
 					<div class="card-body text-dark">
-				<div class="mb-3">
-				  <textarea class="form-control border-0" id="exampleFormControlTextarea1" rows="3"></textarea>
+				<div class="mb-1">
+				<!-- Notes START-->
+					<form asp-controller="projects" asp-action="Edit">
+						<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+						<input type="hidden" asp-for="Id" />
+						<input type="hidden" asp-for="Title" />
+						<input type="hidden" asp-for="Description" />
+						<input type="hidden" asp-for="MemberId" />
+						<textarea name="Notes" class="form-control border-0" rows="3">@Model.Notes</textarea>
+						<button type="submit" class="btn btn-info mt-3 text-white">Save</button>
+					</form>
+				<!-- Notes END -->
 				</div>
 					</div>
 				</div>
 				<!-- General Notes END-->
-
-							
-				
 			</div>
-			<div class="PROJ-DETAILS col-lg-4 ms-2">
+				<div class="PROJ-DETAILS col-lg-4 ms-2">
 			<div class="card bg-white border-0 shadow-sm rounded-5 my-3">					
 				<div class="card-body text-dark">
-					<h5 class="card-title mb-4 py-3 pb-1 ps-3 margin-left nunito border-start border-4 border-info">
-						<a asp-asp-controller="Project" class="text-decoration-none text-black" href="/Projects/Details/9">
-							Flip was here
-						</a>
-					</h5>
-					<p class="card-text px-1 text-grey nunito">In publishing and graphic design, Lorem ipsum is a placeholder text.In publishing and graphic designIn publishing and graphic design, Lorem ipsum is a placeholder text.In publishing and graphic design ...
+					<h5 class="card-title mb-4 py-3 pb-1 ps-3 margin-left nunito border-start border-4 border-info">@Model.Title</h5>
+					<p class="card-text px-1 text-grey nunito">
+						@Model.Description
 					</p>
 				</div>
 			</div>
 		</div>
 		</div>
 	</div>
-	<div class="SIDEBAR col-lg-3">
+		<div class="SIDEBAR col-lg-3">
 		<!-- Latest Updates start -->
 		<div class="p-xl-0">
 			<div class="rounded-3 ">

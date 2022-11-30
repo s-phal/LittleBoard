@@ -1,43 +1,36 @@
-﻿@model LiteBoard.Models.Project
+﻿@using Microsoft.AspNetCore.Identity;
+@model LiteBoard.Models.Project
+@inject UserManager<Member> userManager
 
 @{
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
-
-<h4>Project</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MemberId" class="control-label"></label>
-                <select asp-for="MemberId" class="form-control" asp-items="ViewBag.MemberId"></select>
-                <span asp-validation-for="MemberId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+<form asp-action="Edit">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="Id" />
+    <div class="bg-white mt-5 mx-auto w-50 rounded-5 p-5">
+        <div class="mx-auto text-center">
+            <h2 class="fs-3">Edit Your Project</h2>
+        </div>
+        <div class="mb-3">
+          <label for="formGroupExampleInput" class="form-label">Title</label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+          <label for="formGroupExampleInput2" class="form-label">Description</label>
+            <textarea name="Description" class="form-control" rows="10">@Model.Description</textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+        <input hidden type="text" id="MemberId" name="MemberId" value="@userManager.GetUserId(User)" />
+        <div class="mt-4">
+            <Button type="submit" class="btn btn-info text-white me-2">Update</Button>
+            <a asp-action="Index">Cancel</a>
+        </div>
     </div>
-</div>
+</form>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

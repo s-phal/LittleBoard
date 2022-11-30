@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LiteBoard.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221129164309_Add-UpdatedDate-Chores")]
-    partial class AddUpdatedDateChores
+    [Migration("20221129191125_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,20 +40,20 @@ namespace LiteBoard.Migrations
                     b.Property<bool>("Completed")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTime?>("CreatedDate")
+                    b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("ProjectId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("UpdatedDate")
+                    b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("Chores");
+                    b.ToTable("Chore");
                 });
 
             modelBuilder.Entity("LiteBoard.Models.Member", b =>
@@ -151,6 +151,9 @@ namespace LiteBoard.Migrations
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 

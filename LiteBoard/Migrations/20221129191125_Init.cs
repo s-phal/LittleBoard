@@ -169,6 +169,7 @@ namespace LiteBoard.Migrations
                     Title = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     MemberId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
@@ -183,21 +184,22 @@ namespace LiteBoard.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Chores",
+                name: "Chore",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Body = table.Column<string>(type: "text", nullable: false),
                     Completed = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ProjectId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Chores", x => x.Id);
+                    table.PrimaryKey("PK_Chore", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Chores_Project_ProjectId",
+                        name: "FK_Chore_Project_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Project",
                         principalColumn: "Id",
@@ -242,8 +244,8 @@ namespace LiteBoard.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Chores_ProjectId",
-                table: "Chores",
+                name: "IX_Chore_ProjectId",
+                table: "Chore",
                 column: "ProjectId");
 
             migrationBuilder.CreateIndex(
@@ -271,7 +273,7 @@ namespace LiteBoard.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Chores");
+                name: "Chore");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

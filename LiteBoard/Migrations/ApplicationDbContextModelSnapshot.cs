@@ -50,7 +50,7 @@ namespace LiteBoard.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("Chores");
+                    b.ToTable("Chore");
                 });
 
             modelBuilder.Entity("LiteBoard.Models.Member", b =>
@@ -143,6 +143,9 @@ namespace LiteBoard.Migrations
 
                     b.Property<string>("MemberId")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Notes")
                         .HasColumnType("text");
 
                     b.Property<string>("Title")

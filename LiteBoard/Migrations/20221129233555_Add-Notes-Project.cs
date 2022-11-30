@@ -1,20 +1,19 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace LiteBoard.Migrations
 {
     /// <inheritdoc />
-    public partial class AddUpdatedDateChores : Migration
+    public partial class AddNotesProject : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<DateTime>(
-                name: "UpdatedDate",
-                table: "Chores",
-                type: "timestamp with time zone",
+            migrationBuilder.AddColumn<string>(
+                name: "Notes",
+                table: "Project",
+                type: "text",
                 nullable: true);
         }
 
@@ -22,8 +21,8 @@ namespace LiteBoard.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "UpdatedDate",
-                table: "Chores");
+                name: "Notes",
+                table: "Project");
         }
     }
 }
