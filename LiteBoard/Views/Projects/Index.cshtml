@@ -9,7 +9,7 @@
 <div class="row mt-5">
 
 	<div class="MAIN col-lg-9">
-        <div class="row">
+        <div class="row gy-4">
 			<div class="d-flex align-items-end mb-2">
 				<h2 class="me-auto text-black opacity-50 text-uppercase fw-bold fs-6">My Projects</h2>
 				<a class="btn btn-info text-white" asp-controller="projects" asp-action="create">Add Project</a>
@@ -20,7 +20,7 @@
 				{				
 				<!-- Card Start -->
 					<div class="col-sm-6 col-xl-4">
-						<div class="card bg-white border-0 shadow-sm rounded-5 mt-3 mb-1" style="height:190px">					
+						<div class="card bg-white border-0 shadow-sm rounded-5 mt-0 mb-1 h-100">					
 							<div class="card-body text-dark">
 								<h5 class="card-title mb-4 py-3 pb-1 ps-3 margin-left nunito border-start border-4 border-info"><a asp-asp-controller="Project" asp-action="Details" asp-route-id="@project.Id" class="text-decoration-none text-black">
 										@if (project.Title.Count() > 28)
@@ -44,6 +44,19 @@
 									}
 								</p>
 							</div>
+						<footer class="ms-auto pb-3 pe-4">
+							@{
+								if(userManager.GetUserId(User) == project.MemberId)
+								{
+									<form asp-controller="projects" asp-action="Delete">
+										<input type="hidden" name="id" value="@project.Id" />
+										<input type="hidden" name="MemberId" value="@project.MemberId" />
+
+										<button class="fst-italic text-secondary text-decoration-none small bg-transparent border-0">Delete</button>
+									</form>
+								}
+							}
+						</footer>
 						</div>
 					</div>
 				<!-- Card End -->
@@ -57,7 +70,6 @@
 	<div class="SIDEDBAR col-lg-3">
 		<partial name="_ActivityIndex"/>
 	</div>
-	
 
 
 </div>

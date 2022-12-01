@@ -90,13 +90,18 @@ namespace LiteBoard.Controllers
 			if (project.MemberId != _userManager.GetUserId(User))
 			{
 				return RedirectToAction("unauthorize", "project");
+                
 
 			}
 
 			if (ModelState.IsValid)
             {
-                
-                chore.Activities.Add(new ActivityModel() { ProjectId = project.Id, Description = "created_task", Subject = chore.Body }); // Insert new row of Activity
+                var Activities = _context.Activity;
+                Activities.Add(new ActivityModel() { 
+                    MemberId = project.MemberId,
+                    ProjectId = project.Id, 
+                    Description = "created_task", 
+                    Subject = chore.Body }); // Insert new row of Activity
 
                 _context.Add(chore);
                 await _context.SaveChangesAsync();
@@ -167,7 +172,9 @@ namespace LiteBoard.Controllers
 
                     if(chore.Completed == true)
                     {
-                        chore.Activities.Add(new ActivityModel() { 
+						var Activities = _context.Activity;
+						Activities.Add(new ActivityModel() { 
+                            MemberId = project.MemberId,
                             ProjectId = project.Id, 
                             Description = "completed_task", 
                             Subject = chore.Body }); // Insert new row of Activity
@@ -175,8 +182,9 @@ namespace LiteBoard.Controllers
 
 					if (chore.Completed == false)
 					{
-						chore.Activities.Add(new ActivityModel()
-						{
+                        var Activities = _context.Activity;
+						Activities.Add(new ActivityModel() { 
+                            MemberId = project.MemberId,
 							ProjectId = project.Id,
 							Description = "incompleted_task",
 							Subject = chore.Body

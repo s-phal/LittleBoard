@@ -36,9 +36,9 @@ namespace LiteBoard.Controllers
 
             var applicationDbContext = _context.Project
                 .Include(p => p.Member)
-                .Where(p => p.MemberId == _userManager.GetUserId(User)) // show only projects that belongs to projects owner
+                //.Where(p => p.MemberId == _userManager.GetUserId(User)) // show only projects that belongs to projects owner
                 .Include(p => p.Activities) // fetch activity table
-                .OrderByDescending(p => p.UpdatedDate);
+                .OrderByDescending(p => p.UpdatedDate).Take(9);
 
 
 			return View(await applicationDbContext.ToListAsync());
@@ -67,10 +67,11 @@ namespace LiteBoard.Controllers
                 return NotFound();
             }
 
-            if (project.MemberId != _userManager.GetUserId(User))
-            {
-                return RedirectToAction("unauthorize", "project");
-            }
+                                    //if (project.MemberId != _userManager.GetUserId(User))
+                                    //{
+                                    //    return RedirectToAction("unauthorize", "project");
+                                    //}
+
             return View(project);
         }
 
@@ -93,7 +94,12 @@ namespace LiteBoard.Controllers
             if (ModelState.IsValid)
             {
 
-				project.Activities.Add(new ActivityModel() { Description = "created_project", Subject = project.Title }); // Insert new row of Activity
+				project.Activities.Add(new ActivityModel() { 
+                    MemberId = project.MemberId,
+                    Description = "created_project", 
+                    Subject = project.Title                   
+                    
+                }); // Insert new row of Activity
 
                 _context.Add(project);
                 await _context.SaveChangesAsync();
@@ -153,6 +159,7 @@ namespace LiteBoard.Controllers
                     if (project.Notes != getCurrentValueFromDB.Notes)
                     {
                         project.Activities.Add(new ActivityModel() { 
+                            MemberId = project.MemberId,
                             Description = "updated_notes", 
                             CreatedDate = getCurrentValueFromDB.CreatedDate,
                             Subject = project.Title
@@ -163,6 +170,7 @@ namespace LiteBoard.Controllers
 					{
 						project.Activities.Add(new ActivityModel()
 						{
+                            MemberId = project.MemberId,
 							Description = "updated_title",
 							CreatedDate = getCurrentValueFromDB.CreatedDate,
 							Subject = $"{getCurrentValueFromDB.Title} <span class='text-black'>to</span> {project.Title}"                            

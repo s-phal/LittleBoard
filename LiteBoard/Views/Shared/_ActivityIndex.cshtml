@@ -19,37 +19,37 @@
 						{
 							double timestamp = activity.CreatedDate.ToOADate();
 							var timeSpan = DateTime.FromOADate(timestamp).AddMicroseconds(-timestamp).Humanize();
-							<a class="list-group-item" href="~/projects/details/@item.Id">You completed <span class="text-warning">@activity.Subject</span><span class="text-secondary small"> @timeSpan</span></a>
+						<a class="list-group-item" href="~/projects/details/@item.Id"><span class="fw-bold">@item.Member.FirstName</span> completed <span class="text-warning">@activity.Subject</span><span class="text-secondary small"> @timeSpan</span></a>
 						}
 						if (activity.Description == "incompleted_task")
 						{
 							double timestamp = activity.CreatedDate.ToOADate();
 							var timeSpan = DateTime.FromOADate(timestamp).AddMicroseconds(-timestamp).Humanize();
-							<a class="list-group-item" href="~/projects/details/@item.Id">You incompleted <span class="text-warning">@activity.Subject</span><span class="text-secondary small"> @timeSpan</span></a>
+						<a class="list-group-item" href="~/projects/details/@item.Id"><span class="fw-bold">@item.Member.FirstName</span> incompleted <span class="text-warning">@activity.Subject</span><span class="text-secondary small"> @timeSpan</span></a>
 						}
 						if (activity.Description == "created_task")
 						{
 							double timestamp = activity.CreatedDate.ToOADate();
 							var timeSpan = DateTime.FromOADate(timestamp).AddMicroseconds(-timestamp).Humanize();
-						<a class="list-group-item" href="~/projects/details/@item.Id">You created <span class="text-warning">@activity.Subject</span> in <span class="text-warning">@item.Title</span> <span class="text-secondary small"> @timeSpan</span></a>
+						<a class="list-group-item" href="~/projects/details/@item.Id"><span class="fw-bold">@item.Member.FirstName</span> created <span class="text-warning">@activity.Subject</span> in <span class="text-warning">@item.Title</span> <span class="text-secondary small"> @timeSpan</span></a>
 						}
 						if (activity.Description == "created_project")
 						{
 							double timestamp = activity.CreatedDate.ToOADate();
 							var timeSpan = DateTime.FromOADate(timestamp).AddMicroseconds(-timestamp).Humanize();
-							<a class="list-group-item" href="~/projects/details/@item.Id">You created <span class="text-warning">@activity.Subject</span><span class="text-secondary small"> @timeSpan</span></a>
+						<a class="list-group-item" href="~/projects/details/@item.Id"><span class="fw-bold">@item.Member.FirstName</span> created <span class="text-warning">@activity.Subject</span><span class="text-secondary small"> @timeSpan</span></a>
 						}
 						if (activity.Description == "updated_title")
 						{
 							double timestamp = activity.UpdatedDate.ToOADate();
 							var timeSpan = DateTime.FromOADate(timestamp).AddMicroseconds(-timestamp).Humanize();
-							<a class="list-group-item" href="~/projects/details/@item.Id">You Changed the Project Title  <span class="text-warning">@Html.Raw(activity.Subject)</span><span class="text-secondary small"> @timeSpan</span></a>
+						<a class="list-group-item" href="~/projects/details/@item.Id"><span class="fw-bold">@item.Member.FirstName</span> Changed the Project Title  <span class="text-warning">@Html.Raw(activity.Subject)</span><span class="text-secondary small"> @timeSpan</span></a>
 						}
 						if (activity.Description == "updated_notes")
 						{
 							double timestamp = activity.UpdatedDate.ToOADate();
 							var timeSpan = DateTime.FromOADate(timestamp).AddMicroseconds(-timestamp).Humanize();
-							<a class="list-group-item" href="~/projects/details/@item.Id">You updated the Notes in <span class="text-warning">@item.Title</span><span class="text-secondary small"> @timeSpan</span></a>
+						<a class="list-group-item" href="~/projects/details/@item.Id"><span class="fw-bold">@item.Member.FirstName</span> updated the Notes in <span class="text-warning">@item.Title</span><span class="text-secondary small"> @timeSpan</span></a>
 						}
 					}
 				}
