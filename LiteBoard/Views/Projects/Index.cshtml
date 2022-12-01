@@ -8,7 +8,7 @@
 
 <div class="row mt-5">
 
-	<div class="col-lg-9">
+	<div class="MAIN col-lg-9">
         <div class="row">
 			<div class="d-flex align-items-end mb-2">
 				<h2 class="me-auto text-black opacity-50 text-uppercase fw-bold fs-6">My Projects</h2>
@@ -17,9 +17,7 @@
 		
 			@{
 				foreach (var project in Model) 
-				{
-
-				
+				{				
 				<!-- Card Start -->
 					<div class="col-sm-6 col-xl-4">
 						<div class="card bg-white border-0 shadow-sm rounded-5 mt-3 mb-1" style="height:190px">					
@@ -56,29 +54,9 @@
 	</div>
 
 
-
-
-
-		<div class="col-lg-3">
-			<!-- Latest Updates start -->
-		<div class="p-xl-0">
-			<div class="rounded-3 ">
-				<!-- Dashboard menu -->
-				<div class="list-group list-group-dark list-group-borderless">
-					<a class="list-group-item active">Dashboard</a>
-					<a class="list-group-item" href="#">One Two</a>
-					<a class="list-group-item" href="#">One Two</a>
-					<a class="list-group-item" href="#">One Two</a>
-					<a class="list-group-item" href="#">One Two</a>
-					<a class="list-group-item" href="#">One Two</a>
-					<a class="list-group-item" href="#">One Two</a>
-					<a class="list-group-item" href="#">One Two</a>
-
-				</div>
-			</div>
-		</div>
-			<!-- Latest Updates End -->
-		</div>
+	<div class="SIDEDBAR col-lg-3">
+		<partial name="_ActivityIndex"/>
+	</div>
 	
 
 

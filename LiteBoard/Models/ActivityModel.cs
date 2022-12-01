@@ -6,7 +6,7 @@ namespace LiteBoard.Models
     {
         public int Id { get; set; }
         public string Description { get; set; }
-
+        public string Subject { get; set; }
 
         [DataType(DataType.Date)]
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
@@ -24,5 +24,3 @@ namespace LiteBoard.Models
     }
 }
 
-
-// TODO new activity for incomplete(ABANDONED) task

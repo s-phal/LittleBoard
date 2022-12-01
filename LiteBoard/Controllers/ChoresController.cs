@@ -96,7 +96,7 @@ namespace LiteBoard.Controllers
 			if (ModelState.IsValid)
             {
                 
-                chore.Activities.Add(new ActivityModel() { ProjectId = project.Id, Description = "created_task" }); // Insert new row of Activity
+                chore.Activities.Add(new ActivityModel() { ProjectId = project.Id, Description = "created_task", Subject = chore.Body }); // Insert new row of Activity
 
                 _context.Add(chore);
                 await _context.SaveChangesAsync();
@@ -167,13 +167,25 @@ namespace LiteBoard.Controllers
 
                     if(chore.Completed == true)
                     {
-
-                    chore.Activities.Add(new ActivityModel() { ProjectId = project.Id, Description = "completed_task" }); // Insert new row of Activity
+                        chore.Activities.Add(new ActivityModel() { 
+                            ProjectId = project.Id, 
+                            Description = "completed_task", 
+                            Subject = chore.Body }); // Insert new row of Activity
                     }
 
+					if (chore.Completed == false)
+					{
+						chore.Activities.Add(new ActivityModel()
+						{
+							ProjectId = project.Id,
+							Description = "incompleted_task",
+							Subject = chore.Body
+						}); // Insert new row of Activity
+					}
 
 
-                    _context.Update(chore);
+
+					_context.Update(chore);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)

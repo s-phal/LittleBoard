@@ -14,6 +14,7 @@ using System.Collections.Immutable;
 // TODO implement slugs
 // TODO Sort by Chores->UpdatedDate for each project list
 // TODO Hide Edit View
+// TODO Redirect default route of NotFound id to homepage
 
 namespace LiteBoard.Controllers
 {
@@ -35,13 +36,12 @@ namespace LiteBoard.Controllers
 
             var applicationDbContext = _context.Project
                 .Include(p => p.Member)
-                .Where(p => p.MemberId == _userManager.GetUserId(User)) // show only projects that belongs to projects owner 
+                .Where(p => p.MemberId == _userManager.GetUserId(User)) // show only projects that belongs to projects owner
+                .Include(p => p.Activities) // fetch activity table
                 .OrderByDescending(p => p.UpdatedDate);
 
 
-
-
-            return View(await applicationDbContext.ToListAsync());
+			return View(await applicationDbContext.ToListAsync());
 
         }
 
@@ -57,13 +57,9 @@ namespace LiteBoard.Controllers
 
             var project = await _context.Project
                 .Include(p => p.Member)
-                .Include(p => p.Chores)                
+                .Include(p => p.Chores)
+                .Include(p => p.Activities)
                 .FirstOrDefaultAsync(m => m.Id == id);
-
-			if (project.MemberId != _userManager.GetUserId(User))
-            {
-                return RedirectToAction("unauthorize","project");
-            }
 
 
             if (project == null)
@@ -71,6 +67,10 @@ namespace LiteBoard.Controllers
                 return NotFound();
             }
 
+            if (project.MemberId != _userManager.GetUserId(User))
+            {
+                return RedirectToAction("unauthorize", "project");
+            }
             return View(project);
         }
 
@@ -92,7 +92,8 @@ namespace LiteBoard.Controllers
         {
             if (ModelState.IsValid)
             {
-                project.Activities.Add(new ActivityModel() { Description = "created_project" }); // Insert new row of Activity
+
+				project.Activities.Add(new ActivityModel() { Description = "created_project", Subject = project.Title }); // Insert new row of Activity
 
                 _context.Add(project);
                 await _context.SaveChangesAsync();
@@ -137,23 +138,44 @@ namespace LiteBoard.Controllers
             {
                 return NotFound();
             }
-            if (project.MemberId != _userManager.GetUserId(User))
-            {
-                return RedirectToAction("unauthorize", "project");
-            }
+
 
             if (ModelState.IsValid)
             {
                 try
                 {
-					var getCreatedDateValuesFromDB = await _context.Project // Keeps the same CreatedDate value when updating
+					var getCurrentValueFromDB = await _context.Project // get current state of value from database
 	                .AsNoTracking()
 	                .FirstOrDefaultAsync(p => p.Id == id);
-					project.CreatedDate = getCreatedDateValuesFromDB.CreatedDate;
+					project.CreatedDate = getCurrentValueFromDB.CreatedDate;
 
-                    project.Activities.Add(new ActivityModel() { Description = "updated", CreatedDate = getCreatedDateValuesFromDB.CreatedDate } ); // Create new row of Activity titled Updated
+                    // insert new activity each time a change is made 
+                    if (project.Notes != getCurrentValueFromDB.Notes)
+                    {
+                        project.Activities.Add(new ActivityModel() { 
+                            Description = "updated_notes", 
+                            CreatedDate = getCurrentValueFromDB.CreatedDate,
+                            Subject = project.Title
+                        } ); 
+                    }
 
-                    _context.Update(project);
+					if (project.Title != getCurrentValueFromDB.Title)
+					{
+						project.Activities.Add(new ActivityModel()
+						{
+							Description = "updated_title",
+							CreatedDate = getCurrentValueFromDB.CreatedDate,
+							Subject = $"{getCurrentValueFromDB.Title} <span class='text-black'>to</span> {project.Title}"                            
+						}); 
+					}
+
+
+					if (project.MemberId != _userManager.GetUserId(User))
+					    {
+						    return RedirectToAction("unauthorize", "project");
+					    }
+
+					_context.Update(project);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)

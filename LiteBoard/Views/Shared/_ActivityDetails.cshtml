@@ -1,0 +1,52 @@
+﻿@using Humanizer;
+@model LiteBoard.Models.Project
+
+<!-- Latest Updates start -->
+<div class="p-xl-0">	
+	<div class="rounded-3 ">
+		<!-- Dashboard menu -->
+		<div class="list-group list-group-dark list-group-borderless">
+			<a class="list-group-item active">Project Activity</a>
+			@foreach (var activity in Model.Activities.OrderByDescending(activity => activity.UpdatedDate))
+			{
+				if (activity.Description == "completed_task")
+				{
+					double timestamp = activity.CreatedDate.ToOADate();
+					var timeSpan = DateTime.FromOADate(timestamp).AddMicroseconds(-timestamp).Humanize();
+					<a class="list-group-item" href="~/projects/details/@Model.Id">You completed <span class="text-warning">@activity.Subject</span><span class="text-secondary small"> @timeSpan</span></a>
+				}
+				if (activity.Description == "incompleted_task")
+				{
+					double timestamp = activity.CreatedDate.ToOADate();
+					var timeSpan = DateTime.FromOADate(timestamp).AddMicroseconds(-timestamp).Humanize();
+					<a class="list-group-item" href="~/projects/details/@Model.Id">You incompleted <span class="text-warning">@activity.Subject</span><span class="text-secondary small"> @timeSpan</span></a>
+				}
+				if (activity.Description == "created_task")
+				{
+					double timestamp = activity.CreatedDate.ToOADate();
+					var timeSpan = DateTime.FromOADate(timestamp).AddMicroseconds(-timestamp).Humanize();
+					<a class="list-group-item" href="~/projects/details/@Model.Id">You created <span class="text-warning">@activity.Subject</span><span class="text-secondary small"> @timeSpan</span></a>
+				}
+				if (activity.Description == "created_project")
+				{
+					double timestamp = activity.CreatedDate.ToOADate();
+					var timeSpan = DateTime.FromOADate(timestamp).AddMicroseconds(-timestamp).Humanize();
+					<a class="list-group-item" href="~/projects/details/@Model.Id">You created <span class="text-warning">@activity.Subject</span><span class="text-secondary small"> @timeSpan</span></a>
+				}
+				if (activity.Description == "updated_title")
+				{
+					double timestamp = activity.UpdatedDate.ToOADate();
+					var timeSpan = DateTime.FromOADate(timestamp).AddMicroseconds(-timestamp).Humanize();
+					<a class="list-group-item" href="~/projects/details/@Model.Id">You Changed the Project Title  <span class="text-warning">@Html.Raw(activity.Subject)</span><span class="text-secondary small"> @timeSpan</span></a>
+				}
+				if (activity.Description == "updated_notes")
+				{
+					double timestamp = activity.UpdatedDate.ToOADate();
+					var timeSpan = DateTime.FromOADate(timestamp).AddMicroseconds(-timestamp).Humanize();
+					<a class="list-group-item" href="~/projects/details/@Model.Id">You updated the Project Notes<span class="text-secondary small"> @timeSpan</span></a>
+				}
+			}
+		</div>
+	</div>
+</div>
+<!-- Latest Updates End -->
