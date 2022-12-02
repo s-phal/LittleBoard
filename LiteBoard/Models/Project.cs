@@ -24,5 +24,6 @@ namespace LiteBoard.Models
 
         public virtual ICollection<Chore> Chores { get; set; } = new HashSet<Chore>();
         public virtual ICollection<ActivityModel> Activities { get; set; } = new HashSet<ActivityModel>();
+        public virtual ICollection<ProjectMember> ProjectMembers { get; set; } = new HashSet<ProjectMember>();
     }
 }

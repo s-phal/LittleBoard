@@ -10,11 +10,16 @@ using LiteBoard.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using System.Collections.Immutable;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Query;
 
+
+// TODO Project Description for GITHUB - TEAMBASED Project Management App
 // TODO implement slugs
 // TODO Sort by Chores->UpdatedDate for each project list
 // TODO Hide Edit View
 // TODO Redirect default route of NotFound id to homepage
+// TODO Restrict non project owners from adding members to unauthorized projects
 
 namespace LiteBoard.Controllers
 {
@@ -39,7 +44,6 @@ namespace LiteBoard.Controllers
                 //.Where(p => p.MemberId == _userManager.GetUserId(User)) // show only projects that belongs to projects owner
                 .Include(p => p.Activities) // fetch activity table
                 .OrderByDescending(p => p.UpdatedDate).Take(9);
-
 
 			return View(await applicationDbContext.ToListAsync());
 
@@ -71,6 +75,8 @@ namespace LiteBoard.Controllers
                                     //{
                                     //    return RedirectToAction("unauthorize", "project");
                                     //}
+			ViewData["MembersList"] = new SelectList(_context.Set<Member>(), "Id", "FirstName");
+
 
             return View(project);
         }
@@ -94,14 +100,21 @@ namespace LiteBoard.Controllers
             if (ModelState.IsValid)
             {
 
-				project.Activities.Add(new ActivityModel() { 
+				project.Activities.Add(new ActivityModel() // On Create, add activty to Activity table
+                {  
                     MemberId = project.MemberId,
                     Description = "created_project", 
                     Subject = project.Title                   
                     
-                }); // Insert new row of Activity
+                }); 
 
-                _context.Add(project);
+                project.ProjectMembers.Add(new ProjectMember() // On Create, add user to ProjectMember table
+                {
+                    ProjectId = project.Id,
+                    MemberId = project.MemberId
+                }); 
+
+				_context.Add(project);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -113,7 +126,18 @@ namespace LiteBoard.Controllers
 		[Authorize]
 		public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Project == null)
+			var projectMember = await _context.ProjectMember
+	            .Where(p => p.ProjectId == id && p.MemberId == _userManager.GetUserId(User))
+	            .ToListAsync();
+
+			if (projectMember.Count() == 0)
+			{
+				return RedirectToAction("unauthorize", "project");
+			}
+
+
+
+			if (id == null || _context.Project == null)
             {
                 return NotFound();
             }
@@ -150,9 +174,14 @@ namespace LiteBoard.Controllers
             {
                 try
                 {
+					var projectMember = await _context.ProjectMember
+                        .Where(p => p.ProjectId == project.Id && p.MemberId == _userManager.GetUserId(User) )
+                        .ToListAsync();
+
 					var getCurrentValueFromDB = await _context.Project // get current state of value from database
-	                .AsNoTracking()
-	                .FirstOrDefaultAsync(p => p.Id == id);
+	                    .AsNoTracking()
+	                    .FirstOrDefaultAsync(p => p.Id == id);
+
 					project.CreatedDate = getCurrentValueFromDB.CreatedDate;
 
                     // insert new activity each time a change is made 
@@ -177,11 +206,16 @@ namespace LiteBoard.Controllers
 						}); 
 					}
 
+                    if(projectMember.Count() == 0)
+                    {
+						return RedirectToAction("unauthorize", "project");
 
-					if (project.MemberId != _userManager.GetUserId(User))
-					    {
-						    return RedirectToAction("unauthorize", "project");
-					    }
+					}
+
+
+
+
+
 
 					_context.Update(project);
                     await _context.SaveChangesAsync();
@@ -254,7 +288,35 @@ namespace LiteBoard.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [Route("/project/unauthorize")]
+
+	
+        public async Task<IActionResult> AddMember(int id, Project project)
+        {
+
+            var projectMember = new ProjectMember();
+
+            projectMember.MemberId = project.MemberId;
+            projectMember.ProjectId = project.Id;
+
+
+			_context.Add(projectMember);
+			await _context.SaveChangesAsync();
+            return RedirectToAction("details", "projects", new { id = id }); ;
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+		[Route("/project/unauthorize")]
         public IActionResult Unauthorize()
         {
             return View();

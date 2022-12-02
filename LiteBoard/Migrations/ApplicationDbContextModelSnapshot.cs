@@ -200,6 +200,30 @@ namespace LiteBoard.Migrations
                     b.ToTable("Project");
                 });
 
+            modelBuilder.Entity("LiteBoard.Models.ProjectMember", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("MemberId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MemberId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("ProjectMember");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -373,6 +397,25 @@ namespace LiteBoard.Migrations
                     b.Navigation("Member");
                 });
 
+            modelBuilder.Entity("LiteBoard.Models.ProjectMember", b =>
+                {
+                    b.HasOne("LiteBoard.Models.Member", "Member")
+                        .WithMany()
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LiteBoard.Models.Project", "Project")
+                        .WithMany("ProjectMembers")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Member");
+
+                    b.Navigation("Project");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -434,6 +477,8 @@ namespace LiteBoard.Migrations
                     b.Navigation("Activities");
 
                     b.Navigation("Chores");
+
+                    b.Navigation("ProjectMembers");
                 });
 #pragma warning restore 612, 618
         }

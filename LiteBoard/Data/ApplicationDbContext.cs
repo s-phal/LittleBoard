@@ -13,5 +13,6 @@ namespace LiteBoard.Data
         public DbSet<LiteBoard.Models.Project> Project { get; set; } = default!;
         public DbSet<LiteBoard.Models.Chore> Chore { get; set; } = default!;
         public DbSet<LiteBoard.Models.ActivityModel> Activity { get; set; } = default!;
-    }
+        public DbSet<LiteBoard.Models.ProjectMember> ProjectMember { get; set; } = default!;
+	}
 }

@@ -20,7 +20,24 @@
 				<h2 class="me-auto text-grey fs-6 small"><a href="/projects" class="text-decoration-none text-grey">My Projects</a> / @Model.Title</h2>
 				<a class="btn btn-info text-white me-2" href="/projects/edit/@Model.Id">Edit Project</a>
 			</div>
-			<div class="TASKS-LIST col-65 mt-3">
+			<div class="LEFT-MAIN col-65 mt-3">
+				<div class="PROJECT-MEMBERS-LABEL mb-4">
+					<h2 class="me-auto text-black opacity-50 text-uppercase fw-bold fs-6">
+						Project Members
+					</h2>
+				</div>
+				<!--Add Project Member START -->
+				<div class="ADD-MEMBERS mb-4 nunito rounded-3 w-25">
+					<h5 class="text-dark form-group">
+						<form asp-controller="projects" asp-action="AddMember">
+							<input type="hidden" name="Id" value="@Model.Id" />
+							<select asp-for="MemberId" class="form-control mb-2" asp-items="ViewBag.MembersList"></select>
+							<Button type="submit" class="btn btn-info text-white">Add</Button>
+						</form>
+					</h5>
+				</div>
+
+				<!--Add Project Member END -->
 				<div class="TASK-LABEL mb-4">
 					<h2 class="me-auto text-black opacity-50 text-uppercase fw-bold fs-6">
 						Tasks

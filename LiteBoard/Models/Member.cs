@@ -15,5 +15,6 @@ namespace LiteBoard.Models
 
 
         public virtual ICollection<Project> Projects { get; set; } = new HashSet<Project>();
+
     }
 }

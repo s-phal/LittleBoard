@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LiteBoard.Migrations
 {
     /// <inheritdoc />
-    public partial class intiCreate : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -237,6 +237,32 @@ namespace LiteBoard.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ProjectMember",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ProjectId = table.Column<int>(type: "integer", nullable: false),
+                    MemberId = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProjectMember", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProjectMember_AspNetUsers_MemberId",
+                        column: x => x.MemberId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProjectMember_Project_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "Project",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Activity_MemberId",
                 table: "Activity",
@@ -293,6 +319,16 @@ namespace LiteBoard.Migrations
                 name: "IX_Project_MemberId",
                 table: "Project",
                 column: "MemberId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProjectMember_MemberId",
+                table: "ProjectMember",
+                column: "MemberId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProjectMember_ProjectId",
+                table: "ProjectMember",
+                column: "ProjectId");
         }
 
         /// <inheritdoc />
@@ -318,6 +354,9 @@ namespace LiteBoard.Migrations
 
             migrationBuilder.DropTable(
                 name: "Chore");
+
+            migrationBuilder.DropTable(
+                name: "ProjectMember");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

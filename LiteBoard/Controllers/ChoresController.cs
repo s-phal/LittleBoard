@@ -103,6 +103,8 @@ namespace LiteBoard.Controllers
                     Description = "created_task", 
                     Subject = chore.Body }); // Insert new row of Activity
 
+
+
                 _context.Add(chore);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("details", "projects", new { id = chore.ProjectId});
