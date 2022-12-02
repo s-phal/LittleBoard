@@ -20,7 +20,6 @@ namespace LiteBoard.Models
 
 
 
-		//public virtual ICollection<ActivityModel> Activities { get; set; } = new HashSet<ActivityModel>();
 
-    }
+	}
 }

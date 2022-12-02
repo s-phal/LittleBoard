@@ -43,7 +43,21 @@ namespace LiteBoard.Controllers
                 .Include(p => p.Member)
                 //.Where(p => p.MemberId == _userManager.GetUserId(User)) // show only projects that belongs to projects owner
                 .Include(p => p.Activities) // fetch activity table
+                .Include(p => p.ProjectMembers)
+                .Where( ProjectMember => ProjectMember.MemberId == _userManager.GetUserId(User))
                 .OrderByDescending(p => p.UpdatedDate).Take(9);
+
+
+
+
+            // given we're signed in
+            // and we've been invited to a project that was not created by us
+            // when i visit my dashboard
+            // i should see that project
+
+
+
+
 
 			return View(await applicationDbContext.ToListAsync());
 
@@ -292,18 +306,14 @@ namespace LiteBoard.Controllers
 	
         public async Task<IActionResult> AddMember(int id, Project project)
         {
-
             var projectMember = new ProjectMember();
 
             projectMember.MemberId = project.MemberId;
             projectMember.ProjectId = project.Id;
 
-
 			_context.Add(projectMember);
 			await _context.SaveChangesAsync();
             return RedirectToAction("details", "projects", new { id = id }); ;
-
-
 
         }
 

@@ -21,29 +21,31 @@
 				<a class="btn btn-info text-white me-2" href="/projects/edit/@Model.Id">Edit Project</a>
 			</div>
 			<div class="LEFT-MAIN col-65 mt-3">
+				@if(Model.MemberId == userManager.GetUserId(User))
+				{
 				<div class="PROJECT-MEMBERS-LABEL mb-4">
 					<h2 class="me-auto text-black opacity-50 text-uppercase fw-bold fs-6">
 						Project Members
 					</h2>
 				</div>
-				<!--Add Project Member START -->
-				<div class="ADD-MEMBERS mb-4 nunito rounded-3 w-25">
-					<h5 class="text-dark form-group">
-						<form asp-controller="projects" asp-action="AddMember">
-							<input type="hidden" name="Id" value="@Model.Id" />
-							<select asp-for="MemberId" class="form-control mb-2" asp-items="ViewBag.MembersList"></select>
-							<Button type="submit" class="btn btn-info text-white">Add</Button>
-						</form>
-					</h5>
-				</div>
+					<!--Add Project Member START -->
+					<div class="ADD-MEMBERS mb-4 nunito rounded-3 w-25">
+						<h5 class="text-dark form-group">
+							<form asp-controller="projects" asp-action="AddMember">
+								<input type="hidden" name="Id" value="@Model.Id" />
 
-				<!--Add Project Member END -->
-				<div class="TASK-LABEL mb-4">
+								<select asp-for="MemberId" class="form-control mb-2" asp-items="ViewBag.MembersList"></select>
+								<Button type="submit" class="btn btn-info text-white">Add</Button>							
+							</form>
+						</h5>
+					</div>
+					<!--Add Project Member END -->
+				}
+			<div class="TASK-LABEL mb-4">
 					<h2 class="me-auto text-black opacity-50 text-uppercase fw-bold fs-6">
 						Tasks
 					</h2>
 				</div>
-
 			<!--Create Task Start-->
 			<div class="CREATE-TASK p-2 mb-4 bg-white shadow-sm nunito rounded-3">
 				<h5 class="text-dark border-start border-3 border-info fs-5 ps-4 details-margin-left">
@@ -55,12 +57,14 @@
 				</h5>
 			</div>
 			<!--Create Task END -->
+				
 				@if (!Model.Chores.Any())
 				{
 					<div class="mb-4">
 						<span class="text-warning text-danger">There are currently no tasks.</span>
 					</div>
 				}
+				
 				<!-- Task Item START-->
 				@foreach (var chore in Model.Chores.OrderBy( c => c.CreatedDate).ToList())
 				{			
@@ -89,12 +93,12 @@
 					</div>
 				}
 				<!-- Task Item END -->
-
 				<div class="NOTES-LABEL mb-4">
 					<h2 class="me-auto text-black opacity-50 text-uppercase fw-bold fs-6">
 						General Notes
 					</h2>
 				</div>
+				
 				<!-- General Notes START-->
 				<div class="NOTES-CARD card bg-white border-0 shadow-sm rounded-5 my-3">					
 					<div class="card-body text-dark">
@@ -114,6 +118,7 @@
 					</div>
 				</div>
 				<!-- General Notes END-->
+
 			</div>
 				<div class="PROJ-DETAILS col-lg-4 ms-2">
 			<div class="card bg-white border-0 shadow-sm rounded-5 my-3">					
