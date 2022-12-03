@@ -40,26 +40,10 @@ namespace LiteBoard.Controllers
         {
 
             var applicationDbContext = _context.Project
-                .Include(p => p.Member)
-                //.Where(p => p.MemberId == _userManager.GetUserId(User)) // show only projects that belongs to projects owner
-                .Include(p => p.Activities) // fetch activity table
                 .Include(p => p.ProjectMembers)
-                .Where( ProjectMember => ProjectMember.MemberId == _userManager.GetUserId(User))
-                .OrderByDescending(p => p.UpdatedDate).Take(9);
+                .OrderByDescending(p => p.UpdatedDate);       
 
-
-
-
-            // given we're signed in
-            // and we've been invited to a project that was not created by us
-            // when i visit my dashboard
-            // i should see that project
-
-
-
-
-
-			return View(await applicationDbContext.ToListAsync());
+            return View(await applicationDbContext.ToListAsync());
 
         }
 
@@ -161,10 +145,7 @@ namespace LiteBoard.Controllers
             {
                 return NotFound();
             }
-            if(project.MemberId != _userManager.GetUserId(User))
-            {
-                return RedirectToAction("unauthorize", "project");
-            }
+
 
             ViewData["MemberId"] = new SelectList(_context.Users, "Id", "Id", project.MemberId);
             return View(project);

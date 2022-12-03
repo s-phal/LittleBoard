@@ -17,8 +17,10 @@
 		
 			@{
 				foreach (var project in Model) 
-				{				
-				<!-- Card Start -->
+				{
+					if (project.ProjectMembers.Select(ProjectMember => ProjectMember.MemberId).Contains(userManager.GetUserId(User)))
+					{
+					<!-- Card Start -->
 					<div class="col-sm-6 col-xl-4">
 						<div class="card bg-white border-0 shadow-sm rounded-5 mt-0 mb-1 h-100">					
 							<div class="card-body text-dark">
@@ -61,6 +63,7 @@
 					</div>
 				<!-- Card End -->
 					}
+				}
 				}
 		</div>
 
