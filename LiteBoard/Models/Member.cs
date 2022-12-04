@@ -7,9 +7,9 @@ namespace LiteBoard.Models
     {
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        
 
-        public string? AvatarUrl { get; set; }
+
+        public string? AvatarUrl { get; set; } = "default.png";
         [NotMapped]
         public IFormFile? ImageFile { get; set; }
 

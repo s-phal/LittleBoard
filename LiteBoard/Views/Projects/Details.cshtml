@@ -6,6 +6,7 @@
 	ViewData["Title"] = "Details";
 	string completed = "checked";
 	string textGrey = "text-grey";
+
 }
 
 <div class="row mt-5">
@@ -16,6 +17,9 @@
 				<a class="btn btn-info text-white me-2" href="/projects/edit/@Model.Id">Edit Project</a>
 			</div>
 			<div class="LEFT-MAIN col-65 mt-3">
+
+				
+
 				@if(Model.MemberId == userManager.GetUserId(User))
 				{
 				<div class="PROJECT-MEMBERS-LABEL mb-4">
@@ -24,17 +28,16 @@
 					</h2>
 				</div>
 					<!--Add Project Member START -->
-					<div class="ADD-MEMBERS mb-4 nunito rounded-3 w-25">
-						<h5 class="text-dark form-group">
-							<form asp-controller="projects" asp-action="AddMember">
-								<input type="hidden" name="Id" value="@Model.Id" />
-
-								<select asp-for="MemberId" class="form-control mb-2" asp-items="ViewBag.MembersList"></select>
-								<Button type="submit" class="btn btn-info text-white">Add</Button>							
-							</form>
-						</h5>
-					</div>
+					<form asp-controller="projects" asp-action="AddMember">
+						<div class="ADD-MEMBERS input-group mb-4 nunito rounded-3 w-100">							
+							<input type="hidden" name="Id" value="@Model.Id" />
+							<select asp-for="MemberId" class="form-select" asp-items="ViewBag.MembersList"></select>
+							<Button type="submit" class="btn btn-info text-white">Add</Button>						
+						</div>
+					</form>
 					<!--Add Project Member END -->
+
+
 				}
 			<div class="TASK-LABEL mb-4">
 					<h2 class="me-auto text-black opacity-50 text-uppercase fw-bold fs-6">
@@ -115,7 +118,7 @@
 				<!-- General Notes END-->
 
 			</div>
-				<div class="PROJ-DETAILS col-lg-4 ms-2">
+			<div class="PROJ-DETAILS col-lg-4 ms-2">
 			<div class="card bg-white border-0 shadow-sm rounded-5 my-3">					
 				<div class="card-body text-dark">
 					<h5 class="card-title mb-4 py-3 pb-1 ps-3 margin-left nunito border-start border-4 border-info">@Model.Title</h5>

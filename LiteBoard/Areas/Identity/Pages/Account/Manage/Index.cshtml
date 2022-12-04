@@ -14,33 +14,34 @@
     <div class="col-md-6">
         <form id="profile-form" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
+            <div class="USERNAME form-floating mb-3">
                 <input asp-for="Username" class="form-control" placeholder="Please choose your username." disabled />
                 <label asp-for="Username" class="form-label"></label>
             </div>
-            <div class="mb-3 d-flex">
+            <div class="NAMES mb-3 d-flex">
                 <div class="FIRSTNAME form-floating w-50 me-2">
                 <input asp-for="Input.FirstName" class="form-control" value="@user.FirstName"  />
                 <label asp-for="Input.FirstName" class="form-label"></label>
                 </div>                
                 <div class="LASTNAME form-floating w-50 ms-2">
-                    <input asp-for="Input" class="form-control" value="@user.LastName" />
-                    <label asp-for="Input" class="form-label"></label>
+                    <input asp-for="Input.LastName" class="form-control" value="@user.LastName" />
+                    <label asp-for="Input.LastName" class="form-label"></label>
                 </div>
             </div>
-            <div class="PF-LABEL mb-2">
-                <label class="text-secondary">Profile Picture</label>
+            <div class="AVATAR">
+                <div class="PROFILE-PICTURE-LABEL mb-2">
+                    <label class="text-secondary">Profile Picture</label>
+                    <div class="my-3">
+                        <img src="~/uploads/avatars/@user.AvatarUrl" class="img-thumbnail img-fluid" />
+                    </div>
+                </div>
+                <div class="PICTURE-INPUT input-group mb-3">
+                    <input type="file" class="form-control" asp-for="Input.ImageFile" accept=".jpg, .jpeg, .png, .gif">
+                    <span asp-validation-for="Input.ImageFile" class="text-danger"></span>
+
+                </div>
             </div>
-            <div class="PF-INPUT input-group mb-3">
-                <input type="file" class="form-control" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload">
-                <button class="btn btn-info text-white" type="button" id="inputGroupFileAddon04">Upload</button>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Please enter your phone number."/>
-                <label asp-for="Input.PhoneNumber" class="form-label"></label>
-                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
-            </div>
-            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+            <button class="SAVE-BUTTON w-100 btn btn-lg btn-primary" id="update-profile-button" type="submit">Save</button>
         </form>
     </div>
 </div>

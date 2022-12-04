@@ -75,7 +75,6 @@ namespace LiteBoard.Controllers
                                     //}
 			ViewData["MembersList"] = new SelectList(_context.Set<Member>(), "Id", "FirstName");
 
-
             return View(project);
         }
 

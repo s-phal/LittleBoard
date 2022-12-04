@@ -4,6 +4,7 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using LiteBoard.Models;
@@ -17,13 +18,16 @@ namespace LiteBoard.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<Member> _userManager;
         private readonly SignInManager<Member> _signInManager;
+        private readonly IWebHostEnvironment _hostingEnvironment;
 
         public IndexModel(
             UserManager<Member> userManager,
-            SignInManager<Member> signInManager)
+            SignInManager<Member> signInManager,
+            IWebHostEnvironment hostingEnvironment)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         /// <summary>
@@ -62,6 +66,14 @@ namespace LiteBoard.Areas.Identity.Pages.Account.Manage
 
             [Display(Name = "First Name")]
             public string FirstName { get; set; }
+
+            [Display(Name = "Last Name")]
+            public string LastName { get; set; }
+
+            public string AvatarUrl { get; set; }
+            public IFormFile ImageFile { get; set; }
+
+
         }
 
         private async Task LoadAsync(Member user)
@@ -115,6 +127,28 @@ namespace LiteBoard.Areas.Identity.Pages.Account.Manage
             }
 
             user.FirstName = Input.FirstName;
+            user.LastName = Input.LastName;
+
+
+            if (Input.ImageFile == null) 
+            {
+                await _userManager.UpdateAsync(user); // update user with new properties
+                await _signInManager.RefreshSignInAsync(user);
+                StatusMessage = "Your profile has been updated";
+                return RedirectToPage();
+            }
+
+
+            user.AvatarUrl = Guid.NewGuid().ToString() + "-" + Input.ImageFile.FileName;
+
+            string imagePath = _hostingEnvironment.WebRootPath + Path.DirectorySeparatorChar + "uploads" + Path.DirectorySeparatorChar + "avatars" + Path.DirectorySeparatorChar + user.AvatarUrl;
+
+            using (Stream fileStream = new FileStream(imagePath, FileMode.Create))
+            {
+                Input.ImageFile.CopyTo(fileStream);
+            }
+
+
             await _userManager.UpdateAsync(user); // update user with new properties
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";
