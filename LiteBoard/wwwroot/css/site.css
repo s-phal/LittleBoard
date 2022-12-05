@@ -58,5 +58,21 @@ body {
 
 .avatar {
     height: 3rem;
-    widows: 3rem;
+    width: 3rem;
+}
+
+.action-trigger-hover .item-show {
+    display: block;
+    visibility: visible;
+    transition: all 0.3s ease-in-out;
+}
+
+.action-trigger-hover .item-show-hover {
+    display: none;
+    visibility: hidden;
+    transition: all 0.3s ease-in-out;
+}
+
+.resize-dropdown {
+    min-width: 5rem;
 }

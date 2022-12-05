@@ -282,21 +282,32 @@ namespace LiteBoard.Controllers
 	
         public async Task<IActionResult> AddMember(int id, Project project)
         {
-
 			var memberExist = await _context.ProjectMember
 	            .Where(p => p.ProjectId == project.Id && p.MemberId == project.MemberId)
 	            .ToListAsync();
 
             if(memberExist.Count() == 0)
             {
-			    var projectMember = new ProjectMember();
-
-                projectMember.MemberId = project.MemberId;
-                projectMember.ProjectId = project.Id;
-
+                var projectMember = new ProjectMember()
+                {
+                    MemberId = project.MemberId,
+                    ProjectId = project.Id
+                };
                 
-
 			    _context.Add(projectMember);
+
+                var memberActivity = new ActivityModel()
+                {
+
+                    ProjectId = project.Id,
+                    MemberId = project.MemberId,
+                    Description = "added_member",
+                    Subject = project.Title
+                };
+
+                _context.Activity.Add(memberActivity);
+
+
 			    await _context.SaveChangesAsync();
 				TempData["DisplayMessage"] = $"Member has been added to the project.";
 				return RedirectToAction("details", "projects", new { id = id });
@@ -304,13 +315,36 @@ namespace LiteBoard.Controllers
 			}
 			TempData["DisplayMessage"] = $"Member is already part of the project members list.";
 			return RedirectToAction("details", "projects", new { id = id });
-            
-
-
-
-
 		}
 
+
+		public async Task<IActionResult> RemoveMember(Project project)
+		{
+            if(project.MemberId == _userManager.GetUserId(User))
+            {
+                TempData["DisplayMessage"] = "Can not remove self from Project.";
+				return RedirectToAction("details", "projects", new { id = project.Id });
+
+			}
+
+
+			var projectMember = _context.ProjectMember
+	            .Where(p => p.ProjectId == project.Id && p.MemberId == project.MemberId)
+				.FirstOrDefaultAsync();
+
+
+			if (projectMember != null)
+			{
+				_context.ProjectMember.Remove(await projectMember);
+				await _context.SaveChangesAsync();
+				return RedirectToAction("details", "projects", new { id = project.Id });
+
+			}
+
+
+
+			return RedirectToAction("details","projects", new { id = project.Id});
+		}
 
 		[Route("/project/unauthorize")]
         public IActionResult Unauthorize()

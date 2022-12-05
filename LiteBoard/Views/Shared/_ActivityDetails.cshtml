@@ -11,7 +11,7 @@
 		<!-- Dashboard menu -->
 		<div class="list-group list-group-dark list-group-borderless">
 			<a class="list-group-item active">Project Activity</a>
-			@foreach (var activity in Model.Activities.OrderByDescending(activity => activity.UpdatedDate))
+			@foreach (var activity in Model.Activities.OrderByDescending(activity => activity.UpdatedDate).Take(9))
 			{
 				if (activity.Description == "completed_task")
 				{
@@ -49,6 +49,17 @@
 					var timeSpan = DateTime.FromOADate(timestamp).AddMicroseconds(-timestamp).Humanize();
 					<a class="list-group-item" href="~/projects/details/@Model.Id"><span class="fw-bold">@Model.Member.FirstName</span> updated the <span class="text-warning">Project Notes</span><span class="text-secondary small"> @timeSpan</span></a>
 				}
+				if (activity.Description == "added_member")
+				{
+					double timestamp = activity.UpdatedDate.ToOADate();
+					var timeSpan = DateTime.FromOADate(timestamp).AddMicroseconds(-timestamp).Humanize();
+					<a class="list-group-item" href="~/projects/details/@Model.Id"><span class="fw-bold">@Model.Member.FirstName</span> added a new member to <span class="text-warning">@activity.Subject</span><span class="text-secondary small"> @timeSpan</span></a>
+				}
+
+
+
+
+
 			}
 		</div>
 	</div>

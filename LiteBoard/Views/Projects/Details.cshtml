@@ -31,14 +31,42 @@
 			</div>
 			<div class="LEFT-MAIN col-65 mt-3">
 				<div class="MEMBER-AVATARS mb-4">
-					<div class="">
+					<div class="d-flex">
+
+
 						@{
 							foreach (var memberX in _context.ProjectMember.Where(p => p.ProjectId == Model.Id).ToList())
 							{
 								foreach (var item in userManager.Users.Where(m => m.Id == memberX.MemberId))
 								{
-									<img src="~/uploads/avatars/@item.AvatarUrl" class="rounded-circle avatar" />
+									<div class="REMOVE-MEMBER dropdown">
+										<a class="avatar avatar-sm p-0" href="#" id="profileDropdown" role="button" data-bs-auto-close="outside" data-bs-display="static" data-bs-toggle="dropdown">
+											<img src="~/uploads/avatars/@item.AvatarUrl" class="rounded-circle avatar m-1" /> 
+										</a>
+
+										@if(Model.MemberId == userManager.GetUserId(User))
+										{											
+											<ul class="dropdown-menu resize-dropdown" aria-labelledby="profileDropdown">
+												<form asp-controller="projects" asp-action="RemoveMember">
+													<input type="hidden" name="MemberId" value="@item.Id" />
+													<input type="hidden" name="Id" value="@Model.Id" />
+														<li>
+															<button class="dropdown-item text-danger small" >
+																<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
+																	<path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z" />
+																</svg> Remove
+															</button>
+														</li>
+												</form>
+											</ul>
+										}
+
+									</div>
 								}
+
+
+
+
 							}
 						}
 					</div>
@@ -59,11 +87,13 @@
 					<form asp-controller="projects" asp-action="AddMember">
 						<div class="ADD-MEMBERS input-group mb-4 nunito rounded-3 w-100">							
 							<input type="hidden" name="Id" value="@Model.Id" />
+							<input type="hidden" name="Title" value="@Model.Title" />
 							<select asp-for="MemberId" class="form-select" asp-items="ViewBag.MembersList"></select>
 							<Button type="submit" class="btn btn-info text-white">Add</Button>						
 						</div>
 					</form>
 					<!--Add Project Member END -->
+
 
 
 				}
