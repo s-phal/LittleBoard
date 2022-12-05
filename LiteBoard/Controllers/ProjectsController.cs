@@ -39,20 +39,21 @@ namespace LiteBoard.Controllers
         public async Task<IActionResult> Index()
         {
 
+
             var applicationDbContext = _context.Project
                 .Include(p => p.ProjectMembers)
-                .OrderByDescending(p => p.UpdatedDate);       
+                .OrderByDescending(p => p.UpdatedDate);
+	
 
-            return View(await applicationDbContext.ToListAsync());
+			return View(await applicationDbContext.ToListAsync());
 
         }
 
         // GET: Projects/Details/5
         [Authorize]
         public async Task<IActionResult> Details(int? id)
-        {       
-
-            if (id == null || _context.Project == null)
+        {
+			if (id == null || _context.Project == null)
             {
                 return NotFound();
             }
@@ -206,11 +207,6 @@ namespace LiteBoard.Controllers
 
 					}
 
-
-
-
-
-
 					_context.Update(project);
                     await _context.SaveChangesAsync();
                 }
@@ -286,24 +282,34 @@ namespace LiteBoard.Controllers
 	
         public async Task<IActionResult> AddMember(int id, Project project)
         {
-            var projectMember = new ProjectMember();
 
-            projectMember.MemberId = project.MemberId;
-            projectMember.ProjectId = project.Id;
+			var memberExist = await _context.ProjectMember
+	            .Where(p => p.ProjectId == project.Id && p.MemberId == project.MemberId)
+	            .ToListAsync();
 
-			_context.Add(projectMember);
-			await _context.SaveChangesAsync();
-            return RedirectToAction("details", "projects", new { id = id }); ;
+            if(memberExist.Count() == 0)
+            {
+			    var projectMember = new ProjectMember();
 
-        }
+                projectMember.MemberId = project.MemberId;
+                projectMember.ProjectId = project.Id;
+
+                
+
+			    _context.Add(projectMember);
+			    await _context.SaveChangesAsync();
+				TempData["DisplayMessage"] = $"Member has been added to the project.";
+				return RedirectToAction("details", "projects", new { id = id });
+
+			}
+			TempData["DisplayMessage"] = $"Member is already part of the project members list.";
+			return RedirectToAction("details", "projects", new { id = id });
+            
 
 
 
 
-
-
-
-
+		}
 
 
 		[Route("/project/unauthorize")]

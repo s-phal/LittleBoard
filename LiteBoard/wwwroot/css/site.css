@@ -55,3 +55,8 @@ body {
 .no-resize {
     resize: none;
 }
+
+.avatar {
+    height: 3rem;
+    widows: 3rem;
+}

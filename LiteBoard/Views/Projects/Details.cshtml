@@ -1,13 +1,26 @@
-﻿@using Microsoft.AspNetCore.Identity;
+﻿@using LiteBoard.Data;
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 @model LiteBoard.Models.Project
 @inject UserManager<Member> userManager;
+@inject ApplicationDbContext _context;
+
 
 @{
+	
 	ViewData["Title"] = "Details";
 	string completed = "checked";
 	string textGrey = "text-grey";
+	
+	var displayMessage = "";
+	if (TempData.ContainsKey("DisplayMessage"))
+	{
+		displayMessage = TempData["DisplayMessage"] as string;
+	}
+
 
 }
+						
 
 <div class="row mt-5">
 	<div class="MAIN col-lg-9">
@@ -17,15 +30,30 @@
 				<a class="btn btn-info text-white me-2" href="/projects/edit/@Model.Id">Edit Project</a>
 			</div>
 			<div class="LEFT-MAIN col-65 mt-3">
-
-				
+				<div class="MEMBER-AVATARS mb-4">
+					<div class="">
+						@{
+							foreach (var memberX in _context.ProjectMember.Where(p => p.ProjectId == Model.Id).ToList())
+							{
+								foreach (var item in userManager.Users.Where(m => m.Id == memberX.MemberId))
+								{
+									<img src="~/uploads/avatars/@item.AvatarUrl" class="rounded-circle avatar" />
+								}
+							}
+						}
+					</div>
+				</div>
 
 				@if(Model.MemberId == userManager.GetUserId(User))
 				{
-				<div class="PROJECT-MEMBERS-LABEL mb-4">
+				<div class="ADD-MEMBERS-LABEL mb-4">
 					<h2 class="me-auto text-black opacity-50 text-uppercase fw-bold fs-6">
 						Project Members
 					</h2>
+					@if(displayMessage != "")
+						{							
+						<span class="text-danger px-3">@displayMessage</span>
+						}
 				</div>
 					<!--Add Project Member START -->
 					<form asp-controller="projects" asp-action="AddMember">
