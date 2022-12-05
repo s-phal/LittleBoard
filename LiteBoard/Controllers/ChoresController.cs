@@ -87,23 +87,27 @@ namespace LiteBoard.Controllers
         public async Task<IActionResult> Create([Bind("Id,Body,ProjectId")] Chore chore)
         {
 			var project = await _context.Project.FindAsync(chore.ProjectId);
-			if (project.MemberId != _userManager.GetUserId(User))
-			{
-				return RedirectToAction("unauthorize", "project");
-                
 
-			}
+            var projectMember = await _context.ProjectMember
+                .Where(ProjectMember => ProjectMember.ProjectId == chore.ProjectId && ProjectMember.MemberId == _userManager.GetUserId(User))
+                .ToListAsync();
+
+            if (projectMember.Count == 0)
+            {
+                ViewData["DisplayMessage"] = "You are not authorize to perform this task.";
+                return RedirectToAction("details", "projects", new { id = chore.ProjectId });
+            }
+
+
 
 			if (ModelState.IsValid)
             {
                 var Activities = _context.Activity;
                 Activities.Add(new ActivityModel() { 
-                    MemberId = project.MemberId,
+                    MemberId = _userManager.GetUserId(User),
                     ProjectId = project.Id, 
                     Description = "created_task", 
-                    Subject = chore.Body }); // Insert new row of Activity
-
-
+                    Subject = chore.Body }); 
 
                 _context.Add(chore);
                 await _context.SaveChangesAsync();
@@ -120,11 +124,16 @@ namespace LiteBoard.Controllers
 
 
 			var choreContext = await _context.Chore.FindAsync(id);
-			var project = await _context.Project.FindAsync(choreContext.ProjectId);
-			if (project.MemberId != _userManager.GetUserId(User))
-			{
-				return RedirectToAction("unauthorize", "project");
 
+
+			var projectMember = await _context.ProjectMember
+				.Where(ProjectMember => ProjectMember.ProjectId == choreContext.ProjectId && ProjectMember.MemberId == _userManager.GetUserId(User))
+				.ToListAsync();
+
+			if (projectMember.Count == 0)
+			{
+				ViewData["DisplayMessage"] = "You are not authorize to perform this task.";
+				return RedirectToAction("details", "projects", new { id = choreContext.ProjectId });
 			}
 
 			if (id == null || _context.Chore == null)
@@ -137,7 +146,7 @@ namespace LiteBoard.Controllers
             {
                 return NotFound();
             }
-            ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Id", chore.ProjectId);
+            ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Id", choreContext.ProjectId);
             return View(chore);
         }
 
@@ -150,10 +159,14 @@ namespace LiteBoard.Controllers
         public async Task<IActionResult> Edit(int id, [Bind("Id,Body,ProjectId, Completed")] Chore chore)
         {
 			var project = await _context.Project.FindAsync(chore.ProjectId);
-			if (project.MemberId != _userManager.GetUserId(User))
-			{
-				return RedirectToAction("unauthorize", "project");
+			var projectMember = await _context.ProjectMember
+				.Where(ProjectMember => ProjectMember.ProjectId == chore.ProjectId && ProjectMember.MemberId == _userManager.GetUserId(User))
+				.ToListAsync();
 
+			if (projectMember.Count == 0)
+			{
+				ViewData["DisplayMessage"] = "You are not authorize to perform this task.";
+				return RedirectToAction("details", "projects", new { id = chore.ProjectId });
 			}
 
 			if (id != chore.Id)
@@ -176,7 +189,7 @@ namespace LiteBoard.Controllers
                     {
 						var Activities = _context.Activity;
 						Activities.Add(new ActivityModel() { 
-                            MemberId = project.MemberId,
+                            MemberId = _userManager.GetUserId(User),
                             ProjectId = project.Id, 
                             Description = "completed_task", 
                             Subject = chore.Body }); // Insert new row of Activity
@@ -185,10 +198,10 @@ namespace LiteBoard.Controllers
 					if (chore.Completed == false)
 					{
                         var Activities = _context.Activity;
-						Activities.Add(new ActivityModel() { 
-                            MemberId = project.MemberId,
+						Activities.Add(new ActivityModel() {
+							MemberId = _userManager.GetUserId(User),
 							ProjectId = project.Id,
-							Description = "incompleted_task",
+							Description = "updated_task",
 							Subject = chore.Body
 						}); // Insert new row of Activity
 					}

@@ -40,7 +40,7 @@
 								foreach (var item in userManager.Users.Where(m => m.Id == memberX.MemberId))
 								{
 									<div class="REMOVE-MEMBER dropdown">
-										<a class="avatar avatar-sm p-0" href="#" id="profileDropdown" role="button" data-bs-auto-close="outside" data-bs-display="static" data-bs-toggle="dropdown">
+										<a class="avatar avatar-sm p-0" id="profileDropdown" role="button" data-bs-auto-close="outside" data-bs-display="static" data-bs-toggle="dropdown">
 											<img src="~/uploads/avatars/@item.AvatarUrl" class="rounded-circle avatar m-1" /> 
 										</a>
 
@@ -71,6 +71,10 @@
 						}
 					</div>
 				</div>
+				@if (displayMessage != "")
+				{
+					<span class="text-danger px-3">@displayMessage</span>
+				}
 
 				@if(Model.MemberId == userManager.GetUserId(User))
 				{
@@ -78,10 +82,7 @@
 					<h2 class="me-auto text-black opacity-50 text-uppercase fw-bold fs-6">
 						Project Members
 					</h2>
-					@if(displayMessage != "")
-						{							
-						<span class="text-danger px-3">@displayMessage</span>
-						}
+
 				</div>
 					<!--Add Project Member START -->
 					<form asp-controller="projects" asp-action="AddMember">
@@ -122,7 +123,7 @@
 				}
 				
 				<!-- Task Item START-->
-				@foreach (var chore in Model.Chores.OrderBy( c => c.CreatedDate).ToList())
+				@foreach (var chore in Model.Chores.OrderByDescending( c => c.UpdatedDate).ToList())
 				{			
 					<div class="TASK-ITEM p-2 mb-4 bg-white shadow-sm nunito rounded-3 d-flex align-items-center">
 						<div class="TASK-BODY w-100 me-auto">
@@ -160,12 +161,12 @@
 					<div class="card-body text-dark">
 				<div class="mb-1">
 				<!-- Notes START-->
-					<form asp-controller="projects" asp-action="Edit">
+					<form asp-controller="projects" asp-action="UpdateNotes">
 						<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 						<input type="hidden" asp-for="Id" />
 						<input type="hidden" asp-for="Title" />
 						<input type="hidden" asp-for="Description" />
-						<input type="hidden" asp-for="MemberId" />
+						<input type="hidden" name="MemberId" value="@userManager.GetUserId(User)" />
 						<textarea name="Notes" class="form-control border-0" rows="3">@Model.Notes</textarea>
 						<button type="submit" class="btn btn-info mt-3 text-white">Save</button>
 					</form>

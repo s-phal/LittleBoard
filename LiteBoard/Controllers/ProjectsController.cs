@@ -164,31 +164,17 @@ namespace LiteBoard.Controllers
                 return NotFound();
             }
 
-
             if (ModelState.IsValid)
             {
                 try
                 {
-					var projectMember = await _context.ProjectMember
-                        .Where(p => p.ProjectId == project.Id && p.MemberId == _userManager.GetUserId(User) )
-                        .ToListAsync();
+
 
 					var getCurrentValueFromDB = await _context.Project // get current state of value from database
 	                    .AsNoTracking()
 	                    .FirstOrDefaultAsync(p => p.Id == id);
 
 					project.CreatedDate = getCurrentValueFromDB.CreatedDate;
-
-                    // insert new activity each time a change is made 
-                    if (project.Notes != getCurrentValueFromDB.Notes)
-                    {
-                        project.Activities.Add(new ActivityModel() { 
-                            MemberId = project.MemberId,
-                            Description = "updated_notes", 
-                            CreatedDate = getCurrentValueFromDB.CreatedDate,
-                            Subject = project.Title
-                        } ); 
-                    }
 
 					if (project.Title != getCurrentValueFromDB.Title)
 					{
@@ -201,11 +187,18 @@ namespace LiteBoard.Controllers
 						}); 
 					}
 
-                    if(projectMember.Count() == 0)
+                    // START Redirect if user is not project owner
+					var projectMember = await _context.ProjectMember
+                        .Where(p => p.ProjectId == project.Id && p.MemberId == _userManager.GetUserId(User))
+                        .ToListAsync();
+
+					if (projectMember.Count() == 0)
                     {
 						return RedirectToAction("unauthorize", "project");
 
 					}
+
+                    // END ------------------------------------
 
 					_context.Update(project);
                     await _context.SaveChangesAsync();
@@ -278,9 +271,36 @@ namespace LiteBoard.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+		[Authorize]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> UpdateNotes(Project project)
+        {
+			var getCurrentValueFromDB = await _context.Project 
+	            .AsNoTracking()
+	            .FirstOrDefaultAsync(p => p.Id == project.Id);
 
-	
-        public async Task<IActionResult> AddMember(int id, Project project)
+			if (project.Notes != getCurrentValueFromDB.Notes)
+			{
+                var activity = new ActivityModel();
+                activity.MemberId = project.MemberId;
+				activity.Description = "updated_notes";
+				activity.CreatedDate = getCurrentValueFromDB.CreatedDate;
+				activity.Subject = project.Title;
+                activity.ProjectId = project.Id;
+
+				_context.Update(project);
+                _context.Update(activity);
+				await _context.SaveChangesAsync();
+			};
+
+			return RedirectToAction("details", "projects", new { id = project.Id });
+        }
+
+		[Authorize]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> AddMember( Project project)
         {
 			var memberExist = await _context.ProjectMember
 	            .Where(p => p.ProjectId == project.Id && p.MemberId == project.MemberId)
@@ -309,15 +329,16 @@ namespace LiteBoard.Controllers
 
 
 			    await _context.SaveChangesAsync();
-				TempData["DisplayMessage"] = $"Member has been added to the project.";
-				return RedirectToAction("details", "projects", new { id = id });
+				return RedirectToAction("details", "projects", new { id = project.Id });
 
 			}
 			TempData["DisplayMessage"] = $"Member is already part of the project members list.";
-			return RedirectToAction("details", "projects", new { id = id });
+			return RedirectToAction("details", "projects", new { id = project.Id });
 		}
 
-
+		[Authorize]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> RemoveMember(Project project)
 		{
             if(project.MemberId == _userManager.GetUserId(User))
