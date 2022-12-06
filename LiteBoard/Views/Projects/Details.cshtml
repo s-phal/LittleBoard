@@ -27,11 +27,16 @@
 		<div class="row">
 			<div class="BREADCRUMBS d-md-flex align-items-end mb-2">
 				<h2 class="me-auto text-grey fs-6 small"><a href="/projects" class="text-decoration-none text-grey">My Projects</a> / @Model.Title</h2>
-				<a class="btn btn-info text-white me-2" href="/projects/edit/@Model.Id">Edit Project</a>
+				@{
+					var memberExist = _context.ProjectMember.Where(p => p.ProjectId == Model.Id && p.MemberId == userManager.GetUserId(User)).FirstOrDefault();
+				}
+				@if (memberExist != null)
+				{
+				<a class="btn btn-info text-white me-2" href="/projects/edit/@Model.Id">Edit Project</a>					
+				}
+
 				@if(Model.MemberId == userManager.GetUserId(User))
 				{
-
-
 					<!-- Button trigger modal -->
 					<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
 						Delete Project

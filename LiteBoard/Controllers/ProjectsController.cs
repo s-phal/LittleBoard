@@ -16,8 +16,7 @@ using Microsoft.EntityFrameworkCore.Query;
 
 // TODO Refactor
 // TODO Validation
-// TODO Hide Edit View
-// TODO Redirect default route of NotFound id to homepage
+// TODO Add Task DELETE
 // TODO implement slugs
 // TODO Design Logo
 
@@ -67,7 +66,7 @@ namespace LiteBoard.Controllers
 
             if (project == null)
             {
-                return NotFound();
+                return RedirectToAction("index","projects");
             }
 
                                     //if (project.MemberId != _userManager.GetUserId(User))
@@ -171,10 +170,11 @@ namespace LiteBoard.Controllers
                 try
                 {
 
-
 					var getCurrentValueFromDB = await _context.Project // get current state of value from database
 	                    .AsNoTracking()
 	                    .FirstOrDefaultAsync(p => p.Id == id);
+
+                    project.MemberId = getCurrentValueFromDB.MemberId;
 
 					project.CreatedDate = getCurrentValueFromDB.CreatedDate;
 
@@ -182,7 +182,7 @@ namespace LiteBoard.Controllers
 					{
 						project.Activities.Add(new ActivityModel()
 						{
-                            MemberId = project.MemberId,
+                            MemberId = _userManager.GetUserId(User),
 							Description = "updated_title",
 							CreatedDate = getCurrentValueFromDB.CreatedDate,
 							Subject = $"{getCurrentValueFromDB.Title} <span class='text-black'>to</span> {project.Title}"                            
@@ -254,14 +254,26 @@ namespace LiteBoard.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> UpdateNotes(Project project)
         {
+
+			var projectMember = await _context.ProjectMember
+				.Where(ProjectMember => ProjectMember.ProjectId == project.Id && ProjectMember.MemberId == _userManager.GetUserId(User))
+				.ToListAsync();
+
+			if (projectMember.Count == 0)
+			{
+				TempData["DisplayMessage"] = "You are not authorize to perform this task.";
+				return RedirectToAction("details", "projects", new { id = project.Id });
+			}
+
 			var getCurrentValueFromDB = await _context.Project 
 	            .AsNoTracking()
 	            .FirstOrDefaultAsync(p => p.Id == project.Id);
 
 			if (project.Notes != getCurrentValueFromDB.Notes)
 			{
+                project.MemberId = getCurrentValueFromDB.MemberId;
                 var activity = new ActivityModel();
-                activity.MemberId = project.MemberId;
+                activity.MemberId = _userManager.GetUserId(User);
 				activity.Description = "updated_notes";
 				activity.CreatedDate = getCurrentValueFromDB.CreatedDate;
 				activity.Subject = project.Title;

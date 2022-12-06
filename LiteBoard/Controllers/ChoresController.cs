@@ -28,14 +28,11 @@ namespace LiteBoard.Controllers
 
 		// GET: Chores
 		[Authorize]
-		public async Task<IActionResult> Index()
+		public  IActionResult Index()
         {
-            var applicationDbContext = _context.Chore
-                .Include(c => c.Project)
-                .Where(c => c.Project.MemberId == _userManager.GetUserId(User)) // Show only Tasks that belongs to the Project Owner
-                .OrderByDescending(Project => Project.UpdatedDate);
 
-			return View(await applicationDbContext.ToListAsync());
+
+            return RedirectToAction("index", "projects");
         }
 
 		// GET: Chores/Details/5
@@ -72,11 +69,10 @@ namespace LiteBoard.Controllers
 		[Authorize]
 		public IActionResult Create()
         {
-            ViewData["ProjectId"] = new SelectList(_context.Project
-				.Include(p => p.Member)
-				.Where(p => p.MemberId == _userManager.GetUserId(User)), "Id", "Id");
-            return View();
-        }
+
+			return RedirectToAction("index", "projects");
+
+		}
 
 		// POST: Chores/Create
 		// To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -119,36 +115,11 @@ namespace LiteBoard.Controllers
 
 		// GET: Chores/Edit/5
 		[Authorize]
-		public async Task<IActionResult> Edit(int? id)
+		public  IActionResult Edit(int? id)
         {
+			return  RedirectToAction("index", "projects");
 
-
-			var choreContext = await _context.Chore.FindAsync(id);
-
-
-			var projectMember = await _context.ProjectMember
-				.Where(ProjectMember => ProjectMember.ProjectId == choreContext.ProjectId && ProjectMember.MemberId == _userManager.GetUserId(User))
-				.ToListAsync();
-
-			if (projectMember.Count == 0)
-			{
-				ViewData["DisplayMessage"] = "You are not authorize to perform this task.";
-				return RedirectToAction("details", "projects", new { id = choreContext.ProjectId });
-			}
-
-			if (id == null || _context.Chore == null)
-            {
-                return NotFound();
-            }
-
-			var chore = await _context.Chore.FindAsync(id);
-			if (chore == null)
-            {
-                return NotFound();
-            }
-            ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Id", choreContext.ProjectId);
-            return View(chore);
-        }
+		}
 
 		// POST: Chores/Edit/5
 		// To protect from overposting attacks, enable the specific properties you want to bind to.
