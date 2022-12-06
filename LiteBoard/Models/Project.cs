@@ -1,16 +1,19 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
-// TODO Set limit max character limit on Description
 
 namespace LiteBoard.Models
 {
     
     public class Project
     {
-        public int Id { get; set; }  
-        public string Title { get; set; }    
-        public string Description { get; set; }
+        public int Id { get; set; }
+
+        [StringLength(35, ErrorMessage ="Title must be at least 5 characters and can not exceed 35 characters.",MinimumLength = 5)]
+        public string Title { get; set; }
+
+		[StringLength(80, ErrorMessage = "Description must be at least 15 characters and can not exceed 80 characters.", MinimumLength = 15)]
+		public string Description { get; set; }
         public string? Notes { get; set; }
 
         [DataType(DataType.Date)]

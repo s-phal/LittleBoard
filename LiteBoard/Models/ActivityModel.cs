@@ -18,8 +18,6 @@ namespace LiteBoard.Models
         public int ProjectId { get; set; }
         public virtual Project? Project { get; set; }
 
-        //public int ChoreId { get; set; }
-        //public virtual Chore? Chore { get; set; }
 
 		public string MemberId { get; set; }
 		public virtual Member? Member { get; set; }
@@ -27,5 +25,4 @@ namespace LiteBoard.Models
 	}
 }
 
-// TODO comment out Member if we dont need it
 

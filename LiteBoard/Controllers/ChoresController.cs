@@ -94,8 +94,8 @@ namespace LiteBoard.Controllers
 
             if (projectMember.Count == 0)
             {
-                ViewData["DisplayMessage"] = "You are not authorize to perform this task.";
-                return RedirectToAction("details", "projects", new { id = chore.ProjectId });
+                TempData["DisplayMessage"] = "You are not authorize to perform this task.";
+				return RedirectToAction("details", "projects", new { id = chore.ProjectId });
             }
 
 
@@ -165,7 +165,7 @@ namespace LiteBoard.Controllers
 
 			if (projectMember.Count == 0)
 			{
-				ViewData["DisplayMessage"] = "You are not authorize to perform this task.";
+				TempData["DisplayMessage"] = "You are not authorize to perform this task.";
 				return RedirectToAction("details", "projects", new { id = chore.ProjectId });
 			}
 

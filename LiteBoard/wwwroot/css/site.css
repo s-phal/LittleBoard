@@ -76,3 +76,24 @@ body {
 .resize-dropdown {
     min-width: 5rem;
 }
+
+.dropdown-menu.dropdown-animation.show {
+
+    animation-name: dropdownslideIn;
+    position: absolute !important;
+    top: 100% !important;
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.disabled-1 {
+    pointer-events: none;
+    opacity: .40;
+}
+
+.disabled-2 {
+    pointer-events: none;
+    opacity: .40;
+}

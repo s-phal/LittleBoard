@@ -14,12 +14,14 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Query;
 
 
-// TODO Project Description for GITHUB - TEAMBASED Project Management App
-// TODO implement slugs
-// TODO Sort by Chores->UpdatedDate for each project list
+// TODO Refactor
+// TODO Validation
+// TODO Hide Delete Page
+// TODO Allow only image extensions to be uploaded
 // TODO Hide Edit View
 // TODO Redirect default route of NotFound id to homepage
-// TODO Restrict non project owners from adding members to unauthorized projects
+// TODO implement slugs
+// TODO Design Logo
 
 namespace LiteBoard.Controllers
 {
@@ -93,7 +95,7 @@ namespace LiteBoard.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Description, MemberId, ProjectId")] Project project)
+        public async Task<IActionResult> Create([Bind("Id,Title,Description, MemberId, ProjectId, SugarTwist")] Project project)
         {
             if (ModelState.IsValid)
             {
@@ -114,10 +116,12 @@ namespace LiteBoard.Controllers
 
 				_context.Add(project);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("details","projects",new {id = project.Id});
             }
+
+
             ViewData["MemberId"] = new SelectList(_context.Users, "Id", "Id", project.MemberId);
-            return View(project);
+            return View();
         }
 
 		// GET: Projects/Edit/5
@@ -332,7 +336,7 @@ namespace LiteBoard.Controllers
 				return RedirectToAction("details", "projects", new { id = project.Id });
 
 			}
-			TempData["DisplayMessage"] = $"Member is already part of the project members list.";
+			TempData["DisplayMessage"] = "Member is already part of the project members list.";
 			return RedirectToAction("details", "projects", new { id = project.Id });
 		}
 

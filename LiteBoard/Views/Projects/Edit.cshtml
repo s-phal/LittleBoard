@@ -16,23 +16,67 @@
         </div>
         <div class="mb-3">
           <label for="formGroupExampleInput" class="form-label">Title</label>
-            <input asp-for="Title" class="form-control" />
-            <span asp-validation-for="Title" class="text-danger"></span>
+			<input asp-for="Title" class="form-control is-valid" id="validationInputArea" onkeyup="checkInput()" required />
         </div>
         <div class="mb-3">
           <label for="formGroupExampleInput2" class="form-label">Description</label>
-            <textarea name="Description" class="form-control" rows="10">@Model.Description</textarea>
-            <span asp-validation-for="Description" class="text-danger"></span>
+			<textarea name="Description" class="form-control is-valid" rows="7" id="validationTextArea" onkeyup="checkText()" required>@Model.Description</textarea>
         </div>
         <input hidden type="text" id="MemberId" name="MemberId" value="@userManager.GetUserId(User)" />
         <div class="mt-4">
-            <Button type="submit" class="btn btn-info text-white me-2">Update</Button>
+			<Button type="submit" class="btn btn-info text-white me-2 disabled-1 disabled-2" id="addProjectButton">Update</Button>
             <a asp-action="Index">Cancel</a>
         </div>
     </div>
 </form>
 
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+
+<script>
+	const input = document.querySelector("#validationInputArea");
+	const text = document.querySelector("#validationTextArea");
+	const addProjectButton = document.querySelector("#addProjectButton");
+
+	function checkInput() {
+		var value = document.getElementById("validationInputArea").value;
+
+		if (value.length < 5) {
+			input.classList.remove("is-valid");
+			input.classList.add("is-invalid");
+			addProjectButton.classList.add("disabled-1")
+
+		}
+		else if (value.length > 35) {
+			input.classList.remove("is-valid");
+			input.classList.add("is-invalid");
+			addProjectButton.classList.add("disabled-1")
+		}
+		else {
+			input.classList.add("is-valid");
+			input.classList.remove("is-invalid");
+			addProjectButton.classList.remove("disabled-1")
+		}
+	}
+
+	function checkText() {
+		var value2 = document.getElementById("validationTextArea").value;
+
+		if (value2.length < 15) {
+			text.classList.remove("is-valid");
+			text.classList.add("is-invalid");
+			addProjectButton.classList.add("disabled-2")
+
+		}
+		else if (value2.length > 80) {
+			text.classList.remove("is-valid");
+			text.classList.add("is-invalid");
+			addProjectButton.classList.add("disabled-2")
+
+		}
+		else {
+			text.classList.add("is-valid");
+			text.classList.remove("is-invalid");
+			addProjectButton.classList.remove("disabled-2")
+		}
+	}
+</script>

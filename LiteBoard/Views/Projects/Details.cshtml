@@ -10,7 +10,7 @@
 	
 	ViewData["Title"] = "Details";
 	string completed = "checked";
-	string textGrey = "text-grey";
+	string textGrey = "text-grey text-decoration-line-through";
 	
 	var displayMessage = "";
 	if (TempData.ContainsKey("DisplayMessage"))
@@ -30,50 +30,12 @@
 				<a class="btn btn-info text-white me-2" href="/projects/edit/@Model.Id">Edit Project</a>
 			</div>
 			<div class="LEFT-MAIN col-65 mt-3">
-				<div class="MEMBER-AVATARS mb-4">
-					<div class="d-flex">
-
-
-						@{
-							foreach (var memberX in _context.ProjectMember.Where(p => p.ProjectId == Model.Id).ToList())
-							{
-								foreach (var item in userManager.Users.Where(m => m.Id == memberX.MemberId))
-								{
-									<div class="REMOVE-MEMBER dropdown">
-										<a class="avatar avatar-sm p-0" id="profileDropdown" role="button" data-bs-auto-close="outside" data-bs-display="static" data-bs-toggle="dropdown">
-											<img src="~/uploads/avatars/@item.AvatarUrl" class="rounded-circle avatar m-1" /> 
-										</a>
-
-										@if(Model.MemberId == userManager.GetUserId(User))
-										{											
-											<ul class="dropdown-menu resize-dropdown" aria-labelledby="profileDropdown">
-												<form asp-controller="projects" asp-action="RemoveMember">
-													<input type="hidden" name="MemberId" value="@item.Id" />
-													<input type="hidden" name="Id" value="@Model.Id" />
-														<li>
-															<button class="dropdown-item text-danger small" >
-																<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
-																	<path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z" />
-																</svg> Remove
-															</button>
-														</li>
-												</form>
-											</ul>
-										}
-
-									</div>
-								}
-
-
-
-
-							}
-						}
-					</div>
-				</div>
+				
 				@if (displayMessage != "")
 				{
-					<span class="text-danger px-3">@displayMessage</span>
+					<div class="my-3">
+						<span class="text-danger">@displayMessage</span>
+					</div>
 				}
 
 				@if(Model.MemberId == userManager.GetUserId(User))
@@ -94,9 +56,6 @@
 						</div>
 					</form>
 					<!--Add Project Member END -->
-
-
-
 				}
 			<div class="TASK-LABEL mb-4">
 					<h2 class="me-auto text-black opacity-50 text-uppercase fw-bold fs-6">
@@ -178,15 +137,78 @@
 
 			</div>
 			<div class="PROJ-DETAILS col-lg-4 ms-2">
-			<div class="card bg-white border-0 shadow-sm rounded-5 my-3">					
-				<div class="card-body text-dark">
-					<h5 class="card-title mb-4 py-3 pb-1 ps-3 margin-left nunito border-start border-4 border-info">@Model.Title</h5>
-					<p class="card-text px-1 text-grey nunito">
-						@Model.Description
-					</p>
+				<div class="card bg-white border-0 shadow-sm rounded-5 my-3">					
+					<div class="card-body text-dark">
+						<h5 class="card-title mb-4 py-3 pb-1 ps-3 margin-left nunito border-start border-4 border-info">@Model.Title</h5>
+						<p class="card-text px-1 text-grey nunito">
+							@Model.Description
+						</p>
+					</div>
 				</div>
+				<div class="PROJECT-MEMBERS-LABEL mb-2">
+					<h2 class="me-auto text-black opacity-50 text-uppercase fw-bold fs-6">
+						Project Members
+					</h2>
+				</div>
+				<div class="MEMBER-AVATARS mb-2">
+					<div class="d-flex">
+						@{
+							foreach (var memberX in _context.ProjectMember.Where(p => p.ProjectId == Model.Id).ToList())
+							{
+								foreach (var item in userManager.Users.Where(m => m.Id == memberX.MemberId))
+								{
+									<div class="REMOVE-MEMBER dropdown">
+										<a class="avatar avatar-sm p-0" id="profileDropdown" role="button" data-bs-auto-close="outside" data-bs-display="static" data-bs-toggle="dropdown">
+											<img src="~/uploads/avatars/@item.AvatarUrl" class="rounded-circle avatar m-1" />
+										</a>
+
+										@if (Model.MemberId == userManager.GetUserId(User))
+										{
+											<ul class="dropdown-menu resize-dropdown" aria-labelledby="profileDropdown">
+												<form asp-controller="projects" asp-action="RemoveMember">
+													<input type="hidden" name="MemberId" value="@item.Id" />
+													<input type="hidden" name="Id" value="@Model.Id" />
+												<li>
+													<button class="dropdown-item text-danger small">
+														<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
+															<path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z" />
+														</svg> Remove
+													</button>
+												</li>
+												</form>
+											</ul>
+										}
+
+									</div>
+								}
+
+
+
+
+							}
+						}
+					</div>
+				</div>
+
+			
 			</div>
-		</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		</div>
 	</div>
 	<div class="SIDEBAR col-lg-3">

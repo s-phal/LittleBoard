@@ -1,19 +1,56 @@
 ﻿@using LiteBoard.Data;
 @using Microsoft.AspNetCore.Identity;
+@using Microsoft.EntityFrameworkCore;
 
 @model IEnumerable<LiteBoard.Models.Project>
 @inject UserManager<Member> userManager
 @inject ApplicationDbContext _context
 
+@{
+	var newProject = new Project();
+}
+
 
 
 <div class="row mt-5">
-	<div class="MAIN col-lg-9">
+	<div class="MAIN col-lg-12">
         <div class="row gy-4">
 			<div class="d-flex align-items-end mb-2">
-				<h2 class="me-auto text-black opacity-50 text-uppercase fw-bold fs-6">My Projects</h2>
-				<a class="btn btn-info text-white" asp-controller="projects" asp-action="create">Add Project</a>
-			</div>		
+				<h2 class="me-auto text-secondary fs-6">My Projects</h2>
+				<!-- Button trigger modal -->
+				<button type="button" class="btn btn-info text-white" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+				  Add Project
+				</button>
+
+				<!-- Modal START -->
+				<form asp-action="create" asp-controller="projects">
+					<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+				<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+				  <div class="modal-dialog modal-lg">
+					<div class="modal-content">
+					  <div class="modal-header border-0 my-4">
+						<h5 class="modal-title mx-auto fs-2" id="staticBackdropLabel">Let's start something new</h5>
+					  </div>
+					  <div class="modal-body border-0 mx-5">
+							<h2 class="me-auto text-black opacity-50 fw-bold fs-6">Title</h2>
+							<input hidden type="text" name="MemberId" value="@userManager.GetUserId(User)" />
+						    <input type="text" name="Title" class="form-control mb-4 is-valid" id="validationInputArea" onkeyup="checkInput()" required />							
+
+							<h2 class="me-auto text-black opacity-50 fw-bold fs-6">Description</h2>
+							<textarea name="Description" class="form-control is-valid" rows="7" id="validationTextArea" onkeyup="checkText()" required></textarea>
+					  </div>
+					  <div class="modal-footer border-0 mx-5 mb-4">
+						<button type="button" class="btn text-info border-info border-1 rounded-4 shadow-sm" data-bs-dismiss="modal">Cancel</button>
+						<button type="submit" class="btn btn-info text-white rounded-4 shadow-sm disabled-1 disabled-2" id="addProjectButton">Add Project</button>
+					  </div>
+					</div>
+				  </div>
+				</div>
+				</form>
+				<!-- Modal END -->
+
+			</div>
+
 			@{
 				foreach (var project in Model) 
 				{
@@ -23,26 +60,10 @@
 						<div class="col-sm-6 col-xl-4">
 							<div class="card bg-white border-0 shadow-sm rounded-5 mt-0 mb-1 h-100">					
 								<div class="card-body text-dark">
-									<h5 class="card-title mb-4 py-3 pb-1 ps-3 margin-left nunito border-start border-4 border-info"><a asp-asp-controller="Project" asp-action="Details" asp-route-id="@project.Id" class="text-decoration-none text-black">
-											@if (project.Title.Count() > 28)
-											{
-												@project.Title.Substring(0,25) <span>...</span>
-											} else {											
-											@project.Title
-											}
-
+									<h5 class="card-title mb-4 py-3 pb-1 ps-3 margin-left nunito border-start border-4 border-info"><a asp-asp-controller="Project" asp-action="Details" asp-route-id="@project.Id" class="text-decoration-none text-black">@project.Title
 										</a></h5>
-									<p class="card-text px-1 text-grey nunito">
-										@{
-											if(project.Description.Count() > 80)
-											{
-												@project.Description.Substring(0,80) <span>...</span>
-											} 
-											else 
-											{											
-												@project.Description
-											}
-										}
+									<p class="card-text px-1 text-grey nunito">										
+										@project.Description
 									</p>
 								</div>
 							<footer class="ms-auto pb-3 pe-4">
@@ -65,7 +86,65 @@
 			}
 		</div>
 	</div>
-	<div class="SIDEDBAR col-lg-3">
-		<partial name="_ActivityIndex"/>
-	</div>
 </div>
+
+
+<script>
+	const input = document.querySelector("#validationInputArea");
+	const text = document.querySelector("#validationTextArea");
+	const addProjectButton = document.querySelector("#addProjectButton");
+
+	function checkInput() 
+	{
+		var value = document.getElementById("validationInputArea").value;
+
+		if (value.length < 5) 
+		{
+			input.classList.remove("is-valid");
+			input.classList.add("is-invalid");
+			addProjectButton.classList.add("disabled-1")
+
+		}			
+		else if (value.length > 35) 
+		{
+			input.classList.remove("is-valid");
+			input.classList.add("is-invalid");
+			addProjectButton.classList.add("disabled-1")
+		}
+		else 
+		{
+			input.classList.add("is-valid");
+			input.classList.remove("is-invalid");
+			addProjectButton.classList.remove("disabled-1")
+		}
+	}
+
+	function checkText() 
+	{
+		var value2 = document.getElementById("validationTextArea").value;	  
+
+		if (value2.length < 15) 
+		{
+			text.classList.remove("is-valid");
+			text.classList.add("is-invalid");
+			addProjectButton.classList.add("disabled-2")
+
+		}			
+		else if (value2.length > 80) 
+		{
+			text.classList.remove("is-valid");
+			text.classList.add("is-invalid");
+			addProjectButton.classList.add("disabled-2")
+
+		}
+		else 
+		{
+			text.classList.add("is-valid");
+			text.classList.remove("is-invalid");
+			addProjectButton.classList.remove("disabled-2")
+		}
+	}
+</script>
+
+
+
