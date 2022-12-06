@@ -14,8 +14,8 @@
     <div class="col-md-6">
         <form id="profile-form" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="USERNAME form-floating mb-3">
-                <input asp-for="Username" class="form-control" placeholder="Please choose your username." disabled />
+            <div class="USERNAME mb-4 form-floating">
+                <input asp-for="Username" class="form-control" disabled />
                 <label asp-for="Username" class="form-label"></label>
             </div>
             <div class="NAMES mb-3 d-flex">
@@ -28,20 +28,19 @@
                     <label asp-for="Input.LastName" class="form-label"></label>
                 </div>
             </div>
-            <div class="AVATAR">
-                <div class="PROFILE-PICTURE-LABEL mb-2">
+            <div class="AVATAR mt-1">
+                <div class="PROFILE-PICTURE-LABEL">
                     <label class="text-secondary">Profile Picture</label>
-                    <div class="my-3">
+                    <div class="my-2">
                         <img src="~/uploads/avatars/@user.AvatarUrl" class="img-thumbnail img-fluid" />
                     </div>
                 </div>
-                <div class="PICTURE-INPUT input-group mb-3">
-                    <input type="file" class="form-control" asp-for="Input.ImageFile" accept=".jpg, .jpeg, .png, .gif">
+                <div class="PICTURE-INPUT input-group">
+                    <input type="file" class="form-control" asp-for="Input.ImageFile" accept="image/*">
                     <span asp-validation-for="Input.ImageFile" class="text-danger"></span>
-
                 </div>
             </div>
-            <button class="SAVE-BUTTON w-100 btn btn-lg btn-primary" id="update-profile-button" type="submit">Save</button>
+            <button class="SAVE-BUTTON mt-3 w-100 btn btn-lg btn-primary" id="update-profile-button" type="submit">Save</button>
         </form>
     </div>
 </div>

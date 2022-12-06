@@ -138,6 +138,13 @@ namespace LiteBoard.Areas.Identity.Pages.Account.Manage
                 return RedirectToPage();
             }
 
+    
+            if(!Input.ImageFile.ContentType.Contains("image"))
+            {
+				StatusMessage = "Error - file type not accepted";
+				return RedirectToPage();
+			}
+
 
             user.AvatarUrl = Guid.NewGuid().ToString() + "-" + Input.ImageFile.FileName;
 

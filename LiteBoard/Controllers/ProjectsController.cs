@@ -16,8 +16,6 @@ using Microsoft.EntityFrameworkCore.Query;
 
 // TODO Refactor
 // TODO Validation
-// TODO Hide Delete Page
-// TODO Allow only image extensions to be uploaded
 // TODO Hide Edit View
 // TODO Redirect default route of NotFound id to homepage
 // TODO implement slugs
@@ -224,30 +222,6 @@ namespace LiteBoard.Controllers
             return View(project);
         }
 
-		// GET: Projects/Delete/5
-		[Authorize]
-		public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Project == null)
-            {
-                return NotFound();
-            }
-
-            var project = await _context.Project
-                .Include(p => p.Member)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (project == null)
-            {
-                return NotFound();
-            }
-
-            if (project.MemberId != _userManager.GetUserId(User))
-            {
-                return RedirectToAction("unauthorize", "project");
-            }
-
-            return View(project);
-        }
 
 		// POST: Projects/Delete/5
 		[Authorize]

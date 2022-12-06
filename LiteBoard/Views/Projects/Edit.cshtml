@@ -16,11 +16,11 @@
         </div>
         <div class="mb-3">
           <label for="formGroupExampleInput" class="form-label">Title</label>
-			<input asp-for="Title" class="form-control is-valid" id="validationInputArea" onkeyup="checkInput()" required />
+			<input asp-for="Title" class="form-control is-valid" id="validationInputArea" onkeyup="checkInput()" onfocus="checkInput()" onfocusout="checkInput()" required />
         </div>
         <div class="mb-3">
           <label for="formGroupExampleInput2" class="form-label">Description</label>
-			<textarea name="Description" class="form-control is-valid" rows="7" id="validationTextArea" onkeyup="checkText()" required>@Model.Description</textarea>
+			<textarea name="Description" class="form-control is-valid" rows="7" id="validationTextArea" onkeyup="checkText()" onfocus="checkText()" onfocusout="checkInput()" required>@Model.Description</textarea>
         </div>
         <input hidden type="text" id="MemberId" name="MemberId" value="@userManager.GetUserId(User)" />
         <div class="mt-4">
@@ -29,7 +29,6 @@
         </div>
     </div>
 </form>
-
 
 
 <script>
