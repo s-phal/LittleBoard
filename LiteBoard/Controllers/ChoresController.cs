@@ -24,28 +24,7 @@ namespace LiteBoard.Controllers
             _context = context;
             _userManager = userManager;
         }
-
-		// GET: Chores
-		[Authorize]
-		public  IActionResult Index()
-        {
-            return RedirectToAction("index", "projects");
-        }
-
-		// GET: Chores/Details/5
-		[Authorize]
-		public IActionResult Details(int? id)
-        {
-			return RedirectToAction("index", "projects");
-
-		}
-
-		// GET: Chores/Create
-		[Authorize]
-		public IActionResult Create()
-        {
-			return RedirectToAction("index", "projects");
-		}
+	
 
 		// POST: Chores/Create
 		// To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -53,11 +32,11 @@ namespace LiteBoard.Controllers
 		[Authorize]
 		[HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Body,ProjectId")] Chore chore)
+        public async Task<IActionResult> CreateTask([Bind("Id,Body,ProjectId")] Chore chore)
         {
-			var project = await _context.Project.FindAsync(chore.ProjectId);
-
-            var projectMember = await _context.ProjectMember
+			// check if signed in user is part of ProjectMembers table
+			// redirect if user is not found
+			var projectMember = await _context.ProjectMember
                 .Where(ProjectMember => ProjectMember.ProjectId == chore.ProjectId && ProjectMember.MemberId == _userManager.GetUserId(User))
                 .ToListAsync();
 
@@ -67,17 +46,20 @@ namespace LiteBoard.Controllers
 				return RedirectToAction("details", "projects", new { id = chore.ProjectId });
             }
 
-
+            // create a new activity when a chore is created            
+			var project = await _context.Project.FindAsync(chore.ProjectId);
 
 			if (ModelState.IsValid)
             {
-                var Activities = _context.Activity;
-                Activities.Add(new ActivityModel() { 
-                    MemberId = _userManager.GetUserId(User),
-                    ProjectId = project.Id, 
-                    Description = "created_task", 
-                    Subject = chore.Body }); 
+                var newActivity = new ActivityModel()
+                {
+					MemberId = _userManager.GetUserId(User),
+					ProjectId = project.Id,
+					Description = "created_task",
+					Subject = chore.Body
+			    };
 
+                _context.Add(newActivity);
                 _context.Add(chore);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("details", "projects", new { id = chore.ProjectId});
@@ -87,13 +69,6 @@ namespace LiteBoard.Controllers
 
 		}
 
-		// GET: Chores/Edit/5
-		[Authorize]
-		public  IActionResult Edit(int? id)
-        {
-			return  RedirectToAction("index", "projects");
-
-		}
 
 		// POST: Chores/Edit/5
 		// To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -101,9 +76,11 @@ namespace LiteBoard.Controllers
 		[Authorize]
 		[HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Body,ProjectId, Completed")] Chore chore)
+        public async Task<IActionResult> EditTask(int id, [Bind("Id,Body,ProjectId, Completed")] Chore chore)
         {
-			var project = await _context.Project.FindAsync(chore.ProjectId);
+
+			// check if signed in user is part of ProjectMembers table
+			// redirect if user is not found
 			var projectMember = await _context.ProjectMember
 				.Where(ProjectMember => ProjectMember.ProjectId == chore.ProjectId && ProjectMember.MemberId == _userManager.GetUserId(User))
 				.ToListAsync();
@@ -116,42 +93,65 @@ namespace LiteBoard.Controllers
 
 			if (id != chore.Id)
             {
-                return NotFound();
-            }
+				return RedirectToAction("details", "projects", new { id = chore.ProjectId });
+
+			}
 
 			if (ModelState.IsValid)
             {           
 
+			var project = await _context.Project.FindAsync(chore.ProjectId);
                 try
                 {
-					var getCreatedDateValuesFromDB = await _context.Chore // Keeps the same CreatedDate value when updating
+					// since we can have multiple users working on the same project,
+					// we need to ensure that on post update, the project owners data
+					// won't be overridden with the ProjectMembers data.
+
+					// find the project and get its current values.
+					var getCreatedDateValuesFromDB = await _context.Chore 
 	                    .AsNoTracking()
 	                    .FirstOrDefaultAsync(chore => chore.Id == id);
 
+					// keep the created date values the same when updating the row
+					// without this statement, the CreatedDate will be set to NOW
 					chore.CreatedDate = getCreatedDateValuesFromDB.CreatedDate;
 
+					// create a new activity for each corresponding action
                     if(chore.Completed == true)
                     {
-						var Activities = _context.Activity;
-						Activities.Add(new ActivityModel() { 
+						var newActivity = new ActivityModel()
+						{
                             MemberId = _userManager.GetUserId(User),
                             ProjectId = project.Id, 
                             Description = "completed_task", 
-                            Subject = chore.Body }); // Insert new row of Activity
+                            Subject = chore.Body 
+						};
+						_context.Update(newActivity);
                     }
 
 					if (chore.Completed == false)
 					{
-                        var Activities = _context.Activity;
-						Activities.Add(new ActivityModel() {
+						var newActivity = new ActivityModel()
+						{
 							MemberId = _userManager.GetUserId(User),
 							ProjectId = project.Id,
 							Description = "updated_task",
 							Subject = chore.Body
-						}); // Insert new row of Activity
+						};
+						_context.Update(newActivity);
 					}
 
-
+					if (chore.Completed == false && chore.Body == getCreatedDateValuesFromDB.Body)
+					{
+						var newActivity = new ActivityModel()
+						{
+							MemberId = _userManager.GetUserId(User),
+							ProjectId = project.Id,
+							Description = "renewed_task",
+							Subject = chore.Body
+						};
+						_context.Update(newActivity);
+					}
 
 					_context.Update(chore);
                     await _context.SaveChangesAsync();
@@ -169,43 +169,17 @@ namespace LiteBoard.Controllers
                 }
                 return RedirectToAction("details","projects", new { Id = chore.ProjectId });
             }
-            ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Id", chore.ProjectId);
-            return View(chore);
-        }
 
-		// GET: Chores/Delete/5
-		[Authorize]
-		public async Task<IActionResult> Delete(int? id)
-        {
-			var choreContext = await _context.Chore.FindAsync(id);
-			var project = await _context.Project.FindAsync(choreContext.ProjectId);
-			if (project.MemberId != _userManager.GetUserId(User))
-			{
-				return RedirectToAction("unauthorize", "project");
+			return RedirectToAction("details", "projects", new { Id = chore.ProjectId });
 
-			}
-			if (id == null || _context.Chore == null)
-            {
-                return NotFound();
-            }
+		}
 
-            var chore = await _context.Chore
-                .Include(c => c.Project)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (chore == null)
-            {
-                return NotFound();
-            }
-
-
-			return View(chore);
-        }
 
 		// POST: Chores/Delete/5
 		[Authorize]
-		[HttpPost, ActionName("Delete")]
+		[HttpPost, ActionName("DeleteTask")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteTask(int id)
         {
 			var choreContext = await _context.Chore.FindAsync(id);
 

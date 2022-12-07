@@ -42,6 +42,13 @@
 					var timeSpan = DateTime.FromOADate(timestamp).AddMicroseconds(-timestamp).Humanize();
 					<a class="list-group-item" ><span class="fw-bold">@member.FirstName</span> created <span class="text-warning">@activity.Subject</span><span class="text-secondary small"> @timeSpan</span></a>
 				}
+				if (activity.Description == "renewed_task")
+				{
+					double timestamp = activity.CreatedDate.ToOADate();
+					var timeSpan = DateTime.FromOADate(timestamp).AddMicroseconds(-timestamp).Humanize();
+					<a class="list-group-item"><span class="fw-bold">@member.FirstName</span> renewed <span class="text-warning">@activity.Subject</span><span class="text-secondary small"> @timeSpan</span></a>
+				}
+
 				if (activity.Description == "created_project")
 				{
 					double timestamp = activity.CreatedDate.ToOADate();
@@ -78,7 +85,7 @@
 
 
 
-
+				
 			}
 		</div>
 	</div>

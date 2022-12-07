@@ -14,7 +14,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Query;
 
 
-// TODO Refactor
+// TODO Refactor chores
 // TODO Design Logo
 
 namespace LiteBoard.Controllers
@@ -44,7 +44,8 @@ namespace LiteBoard.Controllers
 
         // GET: Projects/Details/5
         [Authorize]
-        public async Task<IActionResult> Details(int? id)
+		[ActionName("Details")]
+		public async Task<IActionResult> ProjectDetails(int? id)
         {
 	
 			// check if signed in user is part of ProjectMembers table
