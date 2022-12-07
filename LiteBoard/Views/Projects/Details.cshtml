@@ -67,33 +67,6 @@
 				}
 			</div>
 			<div class="LEFT-MAIN col-65 mt-3">
-				
-				@if (displayMessage != "")
-				{
-					<div class="my-3">
-						<span class="text-danger">@displayMessage</span>
-					</div>
-				}
-
-				@if(Model.MemberId == userManager.GetUserId(User))
-				{
-				<div class="ADD-MEMBERS-LABEL mb-4">
-					<h2 class="me-auto text-black opacity-50 text-uppercase fw-bold fs-6">
-						Project Members
-					</h2>
-
-				</div>
-					<!--Add Project Member START -->
-					<form asp-controller="projects" asp-action="AddMember">
-						<div class="ADD-MEMBERS input-group mb-4 nunito rounded-3 w-100">							
-							<input type="hidden" name="Id" value="@Model.Id" />
-							<input type="hidden" name="Title" value="@Model.Title" />
-							<select asp-for="MemberId" class="form-select" asp-items="ViewBag.MembersList"></select>
-							<Button type="submit" class="btn btn-info text-white">Add</Button>						
-						</div>
-					</form>
-					<!--Add Project Member END -->
-				}
 			<div class="TASK-LABEL mb-4">
 					<h2 class="me-auto text-black opacity-50 text-uppercase fw-bold fs-6">
 						Tasks
@@ -105,7 +78,7 @@
 					<form asp-controller="chores" asp-action="create">
 						<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 						<input type="hidden" name="ProjectId" asp-for="@Model.Id" />
-						<input class="form-control w-100 border-0" name="Body" placeholder="Add a new task" />
+						<input class="form-control w-100 border-0" name="Body" placeholder="Add a new task"/>
 					</form>
 				</h5>
 			</div>
@@ -119,7 +92,7 @@
 				}
 				
 				<!-- Task Item START-->
-				@foreach (var chore in Model.Chores.OrderByDescending( c => c.UpdatedDate).ToList())
+				@foreach (var chore in Model.Chores.OrderByDescending( c => c.CreatedDate).ToList())
 				{			
 					<div class="TASK-ITEM p-2 mb-4 bg-white shadow-sm nunito rounded-3 d-flex align-items-center">
 						<div class="TASK-BODY w-100 me-auto">
@@ -130,10 +103,11 @@
 									<input type="hidden" name="Id" asp-for="@chore.Id" />
 									<input name="Body" class="form-control w-100 border-0 @if(chore.Completed){ @textGrey }" value="@chore.Body"/>
 								</form>
+
 								<!-- Task Body END -->
 							</h5>
 						</div>
-						<div class="CHECKBOX me-2 form-check">		
+						<div class="CHECKBOX ms-2 form-check">		
 						<!-- Check Box START -->
 							<form asp-controller="Chores" asp-action="Edit">
 								<input type="hidden" name="Id" value="@chore.Id" />
@@ -143,6 +117,19 @@
 							</form>			
 							<!-- Check Box END-->
 						</div>
+						<!-- Delete Icon START -->
+							<form asp-controller="Chores" asp-action="Delete">
+								<input type="hidden" name="id" value="@chore.Id" />
+								<input type="hidden" name="MemberId" value="@userManager.GetUserId(User)" />
+								<button type="submit" class="btn me-2 px-0 text-danger">
+								<svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+								<path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"></path><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"></path>
+								</svg>
+								</button>
+							</form>
+						<!-- Delete Icon END -->
+
+
 					</div>
 				}
 				<!-- Task Item END -->
@@ -182,6 +169,29 @@
 						</p>
 					</div>
 				</div>
+				@if (displayMessage != "")
+				{
+					<div class="alert alert-danger alert-dismissible" role="alert">
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						@displayMessage
+					</div>
+				}
+				<div class="ADD-PROJECT-MEMBERS">
+					@if (Model.MemberId == userManager.GetUserId(User))
+					{
+						<!--Add Project Member START -->
+						<form asp-controller="projects" asp-action="AddMember">
+							<div class="ADD-MEMBERS input-group mb-4 nunito rounded-3 w-100">
+								<input type="hidden" name="Id" value="@Model.Id" />
+								<input type="hidden" name="Title" value="@Model.Title" />
+								<select asp-for="MemberId" class="form-select" asp-items="ViewBag.MembersList"></select>
+								<Button type="submit" class="btn btn-info text-white">Add</Button>
+							</div>
+						</form>
+						<!--Add Project Member END -->
+					}
+				</div>
+
 				<div class="PROJECT-MEMBERS-LABEL mb-2">
 					<h2 class="me-auto text-black opacity-50 text-uppercase fw-bold fs-6">
 						Project Members

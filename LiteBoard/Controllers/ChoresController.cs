@@ -10,7 +10,6 @@ using LiteBoard.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
-// TODO rename routes from CHORES to TASKS
 
 
 namespace LiteBoard.Controllers
@@ -30,48 +29,22 @@ namespace LiteBoard.Controllers
 		[Authorize]
 		public  IActionResult Index()
         {
-
-
             return RedirectToAction("index", "projects");
         }
 
 		// GET: Chores/Details/5
 		[Authorize]
-		public async Task<IActionResult> Details(int? id)
+		public IActionResult Details(int? id)
         {
-			var choreContext = await _context.Chore.FindAsync(id);
-            var project = await _context.Project.FindAsync(choreContext.ProjectId);
-			if (project.MemberId != _userManager.GetUserId(User))
-			{
-				return RedirectToAction("unauthorize", "project");
+			return RedirectToAction("index", "projects");
 
-			}
-			if (id == null || _context.Chore == null)
-            {
-                return NotFound();
-            }
-
-            var chore = await _context.Chore
-                .Include(c => c.Project)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (chore == null)
-            {
-                return NotFound();
-            }
-
-
-
-            return View(chore);
-        }
+		}
 
 		// GET: Chores/Create
 		[Authorize]
 		public IActionResult Create()
         {
-
 			return RedirectToAction("index", "projects");
-
 		}
 
 		// POST: Chores/Create
@@ -109,9 +82,10 @@ namespace LiteBoard.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("details", "projects", new { id = chore.ProjectId});
             }
-            ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Id", chore.ProjectId);
-            return View(chore);
-        }
+
+			return RedirectToAction("details", "projects", new { id = chore.ProjectId });
+
+		}
 
 		// GET: Chores/Edit/5
 		[Authorize]
@@ -234,12 +208,17 @@ namespace LiteBoard.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
 			var choreContext = await _context.Chore.FindAsync(id);
-			var project = await _context.Project.FindAsync(choreContext.ProjectId);
-			if (project.MemberId != _userManager.GetUserId(User))
-			{
-				return RedirectToAction("unauthorize", "project");
 
+			var projectMember = await _context.ProjectMember
+				.Where(ProjectMember => ProjectMember.ProjectId == choreContext.ProjectId && ProjectMember.MemberId == _userManager.GetUserId(User))
+				.ToListAsync();
+
+			if (projectMember.Count == 0)
+			{
+				TempData["DisplayMessage"] = "You are not authorize to perform this task.";
+				return RedirectToAction("details", "projects", new { id = choreContext.ProjectId });
 			}
+
 			if (_context.Chore == null)
             {
                 return Problem("Entity set 'ApplicationDbContext.Chores'  is null.");
@@ -252,7 +231,7 @@ namespace LiteBoard.Controllers
 
 
 			await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("details","projects", new { id = choreContext.ProjectId });
         }
 
         private bool ChoreExists(int id)

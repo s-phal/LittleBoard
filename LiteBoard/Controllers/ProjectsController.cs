@@ -15,9 +15,6 @@ using Microsoft.EntityFrameworkCore.Query;
 
 
 // TODO Refactor
-// TODO Validation
-// TODO Add Task DELETE
-// TODO implement slugs
 // TODO Design Logo
 
 namespace LiteBoard.Controllers
@@ -38,20 +35,30 @@ namespace LiteBoard.Controllers
         public async Task<IActionResult> Index()
         {
 
-
             var applicationDbContext = _context.Project
                 .Include(p => p.ProjectMembers)
-                .OrderByDescending(p => p.UpdatedDate);
-	
+                .OrderByDescending(p => p.UpdatedDate);	
 
 			return View(await applicationDbContext.ToListAsync());
-
         }
 
         // GET: Projects/Details/5
         [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
+	
+			// check if signed in user is part of ProjectMembers table
+			// redirect if user is not found
+			var projectMember = await _context.ProjectMember
+				.Where(p => p.ProjectId == id && p.MemberId == _userManager.GetUserId(User))
+				.ToListAsync();
+
+			if (projectMember.Count() == 0)
+			{
+				return RedirectToAction("index", "projects");
+			}
+
+
 			if (id == null || _context.Project == null)
             {
                 return NotFound();
@@ -69,190 +76,183 @@ namespace LiteBoard.Controllers
                 return RedirectToAction("index","projects");
             }
 
-                                    //if (project.MemberId != _userManager.GetUserId(User))
-                                    //{
-                                    //    return RedirectToAction("unauthorize", "project");
-                                    //}
+
 			ViewData["MembersList"] = new SelectList(_context.Set<Member>(), "Id", "FirstName");
 
             return View(project);
         }
 
-        // GET: Projects/Create
-        [Authorize]
-        public IActionResult Create()
-        {
-            ViewData["MemberId"] = new SelectList(_context.Users, "Id", "Id");
-            return View();
-        }
-
         // POST: Projects/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Description, MemberId, ProjectId, SugarTwist")] Project project)
+        public async Task<IActionResult> CreateProject([Bind("Id,Title,Description, MemberId, ProjectId")] Project project)
         {
             if (ModelState.IsValid)
             {
+                // create a new project
+                // create a new activity
+                // add project creator to ProjectMembers list 
 
-				project.Activities.Add(new ActivityModel() // On Create, add activty to Activity table
-                {  
-                    MemberId = project.MemberId,
-                    Description = "created_project", 
-                    Subject = project.Title                   
-                    
-                }); 
+				_context.Add(project); 
+				await _context.SaveChangesAsync(); // project must exist in database or ActivityModel will fail
 
-                project.ProjectMembers.Add(new ProjectMember() // On Create, add user to ProjectMember table
+				var newActivity = new ActivityModel() 
                 {
                     ProjectId = project.Id,
-                    MemberId = project.MemberId
-                }); 
+                    MemberId = project.MemberId,
+                    Description = "created_project",
+                    Subject = project.Title
+                };
+         
+                var newProjectMember = new ProjectMember()
+                {
+                    ProjectId = project.Id,
+                    MemberId = project.MemberId,
+                };
 
-				_context.Add(project);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("details","projects",new {id = project.Id});
+                _context.Add(newActivity);
+                _context.Add(newProjectMember);
+				await _context.SaveChangesAsync();
+
+				return RedirectToAction("details","projects",new {id = project.Id});
             }
 
-
-            ViewData["MemberId"] = new SelectList(_context.Users, "Id", "Id", project.MemberId);
-            return View();
+            return RedirectToAction("index", "projects");
         }
 
 		// GET: Projects/Edit/5
 		[Authorize]
 		public async Task<IActionResult> Edit(int? id)
         {
+            // check if signed in user is part of ProjectMembers table
+            // redirect if user is not found
 			var projectMember = await _context.ProjectMember
 	            .Where(p => p.ProjectId == id && p.MemberId == _userManager.GetUserId(User))
 	            .ToListAsync();
 
 			if (projectMember.Count() == 0)
 			{
-				return RedirectToAction("unauthorize", "project");
+				return RedirectToAction("index", "projects");
 			}
-
-
 
 			if (id == null || _context.Project == null)
             {
-                return NotFound();
-            }
+				return RedirectToAction("index", "project");
+			}
 
-            var project = await _context.Project.FindAsync(id);
+			var project = await _context.Project.FindAsync(id);
             if (project == null)
             {
-                return NotFound();
-            }
+				return RedirectToAction("index", "project");
+			}
 
-
-            ViewData["MemberId"] = new SelectList(_context.Users, "Id", "Id", project.MemberId);
+			ViewData["MemberId"] = new SelectList(_context.Users, "Id", "Id", project.MemberId);
             return View(project);
         }
+		
 
 		// POST: Projects/Edit/5
 		// To protect from overposting attacks, enable the specific properties you want to bind to.
 		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[Authorize]
 		[HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,MemberId, Notes")] Project project)
-        {
-            if (id != project.Id)
-            {
-                return NotFound();
-            }
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> EditProjectDetails(int id, [Bind("Id,Title,Description,MemberId")] Project project)
+		{
+			// check if signed in user is part of ProjectMembers table
+			// redirect if user is not found
+			var projectMember = await _context.ProjectMember
+				.Where(p => p.ProjectId == project.Id && p.MemberId == _userManager.GetUserId(User))
+				.ToListAsync();
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
+			if (projectMember.Count() == 0)
+			{
+				TempData["DisplayMessage"] = "You are not authorize to perform this task.";
+				return RedirectToAction("index", "project", new { id = project.Id });
 
-					var getCurrentValueFromDB = await _context.Project // get current state of value from database
-	                    .AsNoTracking()
-	                    .FirstOrDefaultAsync(p => p.Id == id);
+			}
 
-                    project.MemberId = getCurrentValueFromDB.MemberId;
+			if (id != project.Id)
+			{
+				return RedirectToAction("index", "project");
+			}
 
+			if (ModelState.IsValid)
+			{
+				try
+				{
+					// since we can have multiple users working on the same project,
+					// we need to ensure that on post update, the project owners data
+					// won't be overridden with the ProjectMembers data.
+
+					// find the project and get its current values.
+					var getCurrentValueFromDB = await _context.Project
+						.AsNoTracking()
+						.FirstOrDefaultAsync(p => p.Id == id);
+					
+					// keep the project owner and the created date values
+					// the same when updating the table.
+					// without this statement, the ProjectMembers Id
+					// will be used and the CreatedDate will be set to NOW
+					project.MemberId = getCurrentValueFromDB.MemberId;
 					project.CreatedDate = getCurrentValueFromDB.CreatedDate;
 
+					// create an activity when the Project Title will be changed.
 					if (project.Title != getCurrentValueFromDB.Title)
 					{
-						project.Activities.Add(new ActivityModel()
+						var newActivity = new ActivityModel()
 						{
-                            MemberId = _userManager.GetUserId(User),
+							ProjectId = project.Id,
+							MemberId = _userManager.GetUserId(User),
 							Description = "updated_title",
 							CreatedDate = getCurrentValueFromDB.CreatedDate,
-							Subject = $"{getCurrentValueFromDB.Title} <span class='text-black'>to</span> {project.Title}"                            
-						}); 
-					}
-
-                    // START Redirect if user is not project owner
-					var projectMember = await _context.ProjectMember
-                        .Where(p => p.ProjectId == project.Id && p.MemberId == _userManager.GetUserId(User))
-                        .ToListAsync();
-
-					if (projectMember.Count() == 0)
-                    {
-						return RedirectToAction("unauthorize", "project");
+							Subject = $"{getCurrentValueFromDB.Title} <span class='text-black'>to</span> {project.Title}"
+						};
+					_context.Add(newActivity);
 
 					}
 
-                    // END ------------------------------------
+					// create an activity when the Project Description will be changed.
+					if (project.Description != getCurrentValueFromDB.Description)
+					{
+						var newActivity = new ActivityModel()
+						{
+							ProjectId = project.Id,
+							MemberId = _userManager.GetUserId(User),
+							Description = "updated_description",
+							CreatedDate = getCurrentValueFromDB.CreatedDate,
+							Subject = project.Title
+						};
 
+					_context.Add(newActivity);
+					}
+
+					// record the changes then save to the database.
 					_context.Update(project);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProjectExists(project.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction("details","projects", new { id = id});
-            }
-            ViewData["MemberId"] = new SelectList(_context.Users, "Id", "Id", project.MemberId);
-            return View(project);
-        }
-
-
-		// POST: Projects/Delete/5
-		[Authorize]
-		[HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.Project == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.Project'  is null.");
-            }
-            var project = await _context.Project.FindAsync(id);
-
-            if (project.MemberId != _userManager.GetUserId(User))
-            {
-                return RedirectToAction("unauthorize", "project");
-            }
-
-            if (project != null)
-            {
-                _context.Project.Remove(project);
-            }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+					await _context.SaveChangesAsync();
+				}
+				catch (DbUpdateConcurrencyException)
+				{
+					if (!ProjectExists(project.Id))
+					{
+						return NotFound();
+					}
+					else
+					{
+						throw;
+					}
+				}
+				return RedirectToAction("details", "projects", new { id = id });
+			}
+			ViewData["MemberId"] = new SelectList(_context.Users, "Id", "Id", project.MemberId);
+			return View(project);
+		}
 
 		[Authorize]
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> UpdateNotes(Project project)
+		public async Task<IActionResult> UpdateNotes([Bind("Id,Title,Description,MemberId, Notes")] Project project)
         {
 
 			var projectMember = await _context.ProjectMember
@@ -290,7 +290,7 @@ namespace LiteBoard.Controllers
 		[Authorize]
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> AddMember( Project project)
+		public async Task<IActionResult> AddMember([Bind("Id,Title,MemberId")] Project project)
         {
 			var memberExist = await _context.ProjectMember
 	            .Where(p => p.ProjectId == project.Id && p.MemberId == project.MemberId)
@@ -329,8 +329,10 @@ namespace LiteBoard.Controllers
 		[Authorize]
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> RemoveMember(Project project)
+		public async Task<IActionResult> RemoveMember([Bind("Id,Title,MemberId")] Project project)
 		{
+			// if action caller is project owner
+			// redirect with error message
             if(project.MemberId == _userManager.GetUserId(User))
             {
                 TempData["DisplayMessage"] = "Can not remove self from Project.";
@@ -338,12 +340,15 @@ namespace LiteBoard.Controllers
 
 			}
 
-
+			// project.MemberId is passed in.
+			// goto ProjectMember table
+			// find that user which matches both MemberId to the Project.Id
 			var projectMember = _context.ProjectMember
 	            .Where(p => p.ProjectId == project.Id && p.MemberId == project.MemberId)
 				.FirstOrDefaultAsync();
 
 
+			// if exit, remove the extracted user
 			if (projectMember != null)
 			{
 				_context.ProjectMember.Remove(await projectMember);
@@ -357,10 +362,30 @@ namespace LiteBoard.Controllers
 			return RedirectToAction("details","projects", new { id = project.Id});
 		}
 
-		[Route("/project/unauthorize")]
-        public IActionResult Unauthorize()
+		// POST: Projects/Delete/5
+		[Authorize]
+		[HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            return View();
+            if (_context.Project == null)
+            {
+                return Problem("Entity set 'ApplicationDbContext.Project'  is null.");
+            }
+            var project = await _context.Project.FindAsync(id);
+
+            if (project.MemberId != _userManager.GetUserId(User))
+            {
+                return RedirectToAction("unauthorize", "project");
+            }
+
+            if (project != null)
+            {
+                _context.Project.Remove(project);
+            }
+            
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         private bool ProjectExists(int id)

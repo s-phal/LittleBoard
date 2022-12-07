@@ -1,7 +1,9 @@
 ﻿@using Humanizer;
+@using LiteBoard.Data;
 @using Microsoft.AspNetCore.Identity;
 @model LiteBoard.Models.Project
 @inject UserManager<Member> userManager;
+@inject ApplicationDbContext _context;
 
 
 
@@ -14,50 +16,63 @@
 			<a class="list-group-item active">Project Activity</a>
 			@foreach (var activity in Model.Activities.OrderByDescending(activity => activity.UpdatedDate).Take(9))
 			{
+				// get access to IdentityUsers context(only context with FirstName property) 
+				// so we may use it as a sort of dictionary key
+				// match Activity.MemberId field with IdentityUser.Id
+				// and reference the match to a First Name
 				var member = userManager.Users.Where(m => m.Id == activity.MemberId).FirstOrDefault();
 
+				
 
 				if (activity.Description == "completed_task")
 				{
 					double timestamp = activity.CreatedDate.ToOADate();
 					var timeSpan = DateTime.FromOADate(timestamp).AddMicroseconds(-timestamp).Humanize();
-					<a class="list-group-item" href="~/projects/details/@Model.Id"><span class="fw-bold">@member.FirstName</span> completed <span class="text-warning">@activity.Subject</span><span class="text-secondary small"> @timeSpan</span></a>
+					<a class="list-group-item"><span class="fw-bold">@member.FirstName</span> completed <span class="text-warning">@activity.Subject</span><span class="text-secondary small"> @timeSpan</span></a>
 				}
 				if (activity.Description == "updated_task")
 				{
 					double timestamp = activity.CreatedDate.ToOADate();
 					var timeSpan = DateTime.FromOADate(timestamp).AddMicroseconds(-timestamp).Humanize();
-					<a class="list-group-item" href="~/projects/details/@Model.Id"><span class="fw-bold">@member.FirstName</span> updated <span class="text-warning">@activity.Subject</span><span class="text-secondary small"> @timeSpan</span></a>
+					<a class="list-group-item"><span class="fw-bold">@member.FirstName</span> updated <span class="text-warning">@activity.Subject</span><span class="text-secondary small"> @timeSpan</span></a>
 				}
 				if (activity.Description == "created_task")
 				{
 					double timestamp = activity.CreatedDate.ToOADate();
 					var timeSpan = DateTime.FromOADate(timestamp).AddMicroseconds(-timestamp).Humanize();
-					<a class="list-group-item" href="~/projects/details/@Model.Id"><span class="fw-bold">@member.FirstName</span> created <span class="text-warning">@activity.Subject</span><span class="text-secondary small"> @timeSpan</span></a>
+					<a class="list-group-item" ><span class="fw-bold">@member.FirstName</span> created <span class="text-warning">@activity.Subject</span><span class="text-secondary small"> @timeSpan</span></a>
 				}
 				if (activity.Description == "created_project")
 				{
 					double timestamp = activity.CreatedDate.ToOADate();
 					var timeSpan = DateTime.FromOADate(timestamp).AddMicroseconds(-timestamp).Humanize();
-					<a class="list-group-item" href="~/projects/details/@Model.Id"><span class="fw-bold">@Model.Member.FirstName</span> created <span class="text-warning">@activity.Subject</span><span class="text-secondary small"> @timeSpan</span></a>
+					<a class="list-group-item" ><span class="fw-bold">@Model.Member.FirstName</span> created <span class="text-warning">@activity.Subject</span><span class="text-secondary small"> @timeSpan</span></a>
 				}
 				if (activity.Description == "updated_title")
 				{
 					double timestamp = activity.UpdatedDate.ToOADate();
 					var timeSpan = DateTime.FromOADate(timestamp).AddMicroseconds(-timestamp).Humanize();
-					<a class="list-group-item" href="~/projects/details/@Model.Id"><span class="fw-bold">@Model.Member.FirstName</span> Changed the Project Title  <span class="text-warning">@Html.Raw(activity.Subject)</span><span class="text-secondary small"> @timeSpan</span></a>
+					<a class="list-group-item" ><span class="fw-bold">@member.FirstName</span> changed the project title  <span class="text-warning">@Html.Raw(activity.Subject)</span><span class="text-secondary small"> @timeSpan</span></a>
+				}
+				if (activity.Description == "updated_description")
+				{
+					double timestamp = activity.UpdatedDate.ToOADate();
+					var timeSpan = DateTime.FromOADate(timestamp).AddMicroseconds(-timestamp).Humanize();
+					<a class="list-group-item">
+						<span class="fw-bold">@member.FirstName</span><span> updated the project description</span><span class="text-secondary small"> @timeSpan</span>
+					</a>
 				}
 				if (activity.Description == "updated_notes")
 				{
 					double timestamp = activity.UpdatedDate.ToOADate();
 					var timeSpan = DateTime.FromOADate(timestamp).AddMicroseconds(-timestamp).Humanize();
-					<a class="list-group-item" href="~/projects/details/@Model.Id"><span class="fw-bold">@member.FirstName</span> updated the <span class="text-warning">Project Notes</span><span class="text-secondary small"> @timeSpan</span></a>
+					<a class="list-group-item"><span class="fw-bold">@member.FirstName</span> updated the <span class="text-warning">Project Notes</span><span class="text-secondary small"> @timeSpan</span></a>
 				}
 				if (activity.Description == "added_member")
 				{
 					double timestamp = activity.UpdatedDate.ToOADate();
 					var timeSpan = DateTime.FromOADate(timestamp).AddMicroseconds(-timestamp).Humanize();
-					<a class="list-group-item" href="~/projects/details/@Model.Id"><span class="fw-bold">@Model.Member.FirstName</span> added a new member to <span class="text-warning">@activity.Subject</span><span class="text-secondary small"> @timeSpan</span></a>
+					<a class="list-group-item"><span class="fw-bold">@Model.Member.FirstName</span> added a new member <span class="text-secondary small"> @timeSpan</span></a>
 				}
 
 

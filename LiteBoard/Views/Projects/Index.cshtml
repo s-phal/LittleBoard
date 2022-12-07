@@ -6,9 +6,7 @@
 @inject UserManager<Member> userManager
 @inject ApplicationDbContext _context
 
-@{
-	var newProject = new Project();
-}
+
 
 
 
@@ -23,7 +21,7 @@
 				</button>
 
 				<!-- Modal START -->
-				<form asp-action="create" asp-controller="projects">
+				<form asp-action="CreateProject" asp-controller="projects">
 					<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 				<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
 				  <div class="modal-dialog modal-lg">
