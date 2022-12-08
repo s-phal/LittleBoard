@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using LiteBoard.Models;
+using ProjectBoss.Models;
 
-namespace LiteBoard.Data
+namespace ProjectBoss.Data
 {
     public class ApplicationDbContext : IdentityDbContext<Member>
     {
@@ -10,9 +10,9 @@ namespace LiteBoard.Data
             : base(options)
         {
         }
-        public DbSet<LiteBoard.Models.Project> Project { get; set; } = default!;
-        public DbSet<LiteBoard.Models.Chore> Chore { get; set; } = default!;
-        public DbSet<LiteBoard.Models.ActivityModel> Activity { get; set; } = default!;
-        public DbSet<LiteBoard.Models.ProjectMember> ProjectMember { get; set; } = default!;
+        public DbSet<ProjectBoss.Models.Project> Project { get; set; } = default!;
+        public DbSet<ProjectBoss.Models.Chore> Chore { get; set; } = default!;
+        public DbSet<ProjectBoss.Models.ActivityModel> Activity { get; set; } = default!;
+        public DbSet<ProjectBoss.Models.ProjectMember> ProjectMember { get; set; } = default!;
 	}
 }

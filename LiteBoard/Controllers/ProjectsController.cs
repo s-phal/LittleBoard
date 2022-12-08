@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using LiteBoard.Data;
-using LiteBoard.Models;
+using ProjectBoss.Data;
+using ProjectBoss.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using System.Collections.Immutable;
@@ -15,7 +15,7 @@ using Microsoft.EntityFrameworkCore.Query;
 
 
 
-namespace LiteBoard.Controllers
+namespace ProjectBoss.Controllers
 {
     public class ProjectsController : Controller
     {

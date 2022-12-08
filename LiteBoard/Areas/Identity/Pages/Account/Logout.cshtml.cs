@@ -5,13 +5,13 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using LiteBoard.Models;
+using ProjectBoss.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 
-namespace LiteBoard.Areas.Identity.Pages.Account
+namespace ProjectBoss.Areas.Identity.Pages.Account
 {
     public class LogoutModel : PageModel
     {

@@ -1,15 +1,14 @@
-﻿using LiteBoard.Models;
+﻿using ProjectBoss.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 
-namespace LiteBoard.Controllers
+namespace ProjectBoss.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly SignInManager<Member> _signInManager;
         
 
         public HomeController(ILogger<HomeController> logger)

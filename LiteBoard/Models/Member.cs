@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace LiteBoard.Models
+namespace ProjectBoss.Models
 {
     public class Member : IdentityUser
     {

@@ -1,9 +1,9 @@
-using LiteBoard.Data;
-using LiteBoard.Models;
+using ProjectBoss.Data;
+using ProjectBoss.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace LiteBoard
+namespace ProjectBoss
 {
     public class Program
     {

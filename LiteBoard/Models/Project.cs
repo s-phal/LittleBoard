@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 
 
-namespace LiteBoard.Models
+namespace ProjectBoss.Models
 {
     
     public class Project

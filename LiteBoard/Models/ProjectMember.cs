@@ -1,4 +1,4 @@
-﻿namespace LiteBoard.Models
+﻿namespace ProjectBoss.Models
 {
 	public class ProjectMember
 	{

@@ -4,7 +4,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aspnet-LiteBoard-0afb3888-429a-45a7-adfa-22c995032a1c</UserSecretsId>
+    <UserSecretsId>aspnet-ProjectBoss-0afb3888-429a-45a7-adfa-22c995032a1c</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
