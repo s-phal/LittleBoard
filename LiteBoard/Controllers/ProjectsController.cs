@@ -14,8 +14,6 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Query;
 
 
-// TODO Refactor chores
-// TODO Design Logo
 
 namespace LiteBoard.Controllers
 {

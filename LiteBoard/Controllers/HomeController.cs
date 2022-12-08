@@ -1,12 +1,16 @@
 ﻿using LiteBoard.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+
 
 namespace LiteBoard.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly SignInManager<Member> _signInManager;
+        
 
         public HomeController(ILogger<HomeController> logger)
         {
@@ -15,7 +19,10 @@ namespace LiteBoard.Controllers
 
         public IActionResult Index()
         {
-            return View();
+
+            return View();     
+
+
         }
 
         public IActionResult Privacy()

@@ -1,8 +1,73 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<Member> SignInManager
+@inject UserManager<Member> userManager
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@{Layout = null;}
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>projectboss</title>
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/site.css" />
+    <link rel="stylesheet" href="/LiteBoard.styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap?family=Nunito&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light mb-3">
+            <div class="container">
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between mt-3">
+                    <ul class="navbar-nav flex-grow-1">
+
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="/"></a>
+                        </li>
+                    </ul>
+                    @if (!SignInManager.IsSignedIn(User))
+                    {
+                        <ul class="navbar-nav align-items-center">
+                            <li class="nav-item">
+                                <a class="nav-link text-secondary text-uppercase fs-6 fw-bold opacity-75 me-4" style="letter-spacing:2px" href="/Identity/Account/Register">Register</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-secondary text-uppercase fs-6 fw-bold opacity-75" style="letter-spacing:2px" href="/Identity/Account/Login">Login</a>
+                            </li>
+                        </ul>                        
+                    }
+
+
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+
+            <div class="text-center" style="margin-top: 200px">
+                <a asp-action="index" asp-controller="projects" class="text-decoration-none">
+                <h1 class="display-1 text-black-50 mb-4" style="letter-spacing:5px">projectboss</h1>
+                <span class="text-info opacity-50 mt-4 text-uppercase fw-bold" style="letter-spacing:2px;">a team based project management app</span>
+                </a>
+            </div>
+
+        </main>
+    </div>
+
+
+    <script src="/lib/jquery/dist/jquery.min.js"></script>
+    <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

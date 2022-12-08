@@ -205,13 +205,13 @@
 					</h2>
 				</div>
 				<div class="MEMBER-AVATARS mb-2">
-					<div class="d-flex">
+					<div class="row">
 						@{
 							foreach (var memberX in _context.ProjectMember.Where(p => p.ProjectId == Model.Id).ToList())
 							{
 								foreach (var item in userManager.Users.Where(m => m.Id == memberX.MemberId))
 								{
-									<div class="REMOVE-MEMBER dropdown">
+									<div class="REMOVE-MEMBER dropdown col-3">
 										<a class="avatar avatar-sm p-0" id="profileDropdown" role="button" data-bs-auto-close="outside" data-bs-display="static" data-bs-toggle="dropdown">
 											<img src="~/uploads/avatars/@item.AvatarUrl" class="rounded-circle avatar m-1" />
 										</a>
