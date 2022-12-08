@@ -12,8 +12,8 @@ using ProjectBoss.Data;
 namespace ProjectBoss.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221208005723_init")]
-    partial class init
+    [Migration("20221208012352_InitCreate")]
+    partial class InitCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
