@@ -11,8 +11,9 @@ Project was developed using:
 - PostgreSQL
 
 Hosting Environment:
-- Debian 11
+- Debian Linux 11
 - Apache Web Server that proxies to the Kestrel Server
 
 ![pbFront](https://user-images.githubusercontent.com/111925825/210558016-71e184c7-710e-4a57-b6ff-4e58a7421b1c.jpg)
 ![pbIn](https://user-images.githubusercontent.com/111925825/210558019-4639fefd-721f-457c-a38d-8d5253c7b35a.jpg)
+
